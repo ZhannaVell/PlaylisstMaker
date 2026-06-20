@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--main-->
+    <dimen name="text_size_title">22sp</dimen>
+    <dimen name="main_button_end">16dp</dimen>
+    <dimen name="main_button_start">16dp</dimen>
+    <dimen name="main_button_bottom">8dp</dimen>
+    <dimen name="main_button_radius">16dp</dimen>
+
+    <!-- -->
+    <dimen name="horizontal">16dp</dimen>
+    <dimen name="top">20dp</dimen>
+    <dimen name="padding">48dp</dimen>
+    <dimen name="padding_s">12dp</dimen>
+
+    <!--text-->
+
+    <dimen name="text_size_body">16sp</dimen>
+
+</resources>

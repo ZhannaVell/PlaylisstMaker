@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blue"
+    android:orientation="vertical">
+
+
+    <com.google.android.material.appbar.MaterialToolbar
+        android:id="@+id/tbMain"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:title="@string/app_name"
+        app:titleTextColor="@color/white"
+        app:titleTextAppearance="@style/titles"/>
+
+    <!--кнопка поиск-->
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_search"
+        android:text="@string/search"
+        app:icon="@drawable/ic_search_24"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/main_button_start"
+        android:layout_marginEnd="@dimen/main_button_end"
+        android:layout_marginBottom="@dimen/main_button_bottom"
+        android:textSize="@dimen/text_size_body"
+        android:textAllCaps="false"
+
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white"
+        app:cornerRadius="@dimen/main_button_radius"
+        app:iconGravity="textStart"
+        app:iconTint="@color/black"/>
+
+    <!-- кнопка медиатека-->
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_media"
+
+        android:text="@string/media"
+        app:icon="@drawable/ic_media_24"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/main_button_start"
+        android:layout_marginEnd="@dimen/main_button_end"
+        android:layout_marginBottom="@dimen/main_button_bottom"
+        android:textSize="@dimen/text_size_body"
+        android:textAllCaps="false"
+
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white"
+        app:cornerRadius="@dimen/main_button_radius"
+        app:iconGravity="textStart"
+        app:iconTint="@color/black"/>
+
+    <!--кнопка Настройки-->
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/btn_settings"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_marginStart="@dimen/main_button_start"
+        android:layout_marginEnd="@dimen/main_button_end"
+        android:layout_marginBottom="@dimen/main_button_bottom"
+        android:textSize="@dimen/text_size_body"
+        android:textAllCaps="false"
+
+        android:textColor="@color/black"
+        android:backgroundTint="@color/white"
+        app:cornerRadius="@dimen/main_button_radius"
+        app:iconGravity="textStart"
+        app:iconTint="@color/black"
+        android:text="@string/settings"
+        app:icon="@drawable/ic_settings_24"/>
+
+
+</LinearLayout>
