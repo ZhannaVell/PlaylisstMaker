@@ -9,9 +9,13 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.doOnTextChanged
 import com.google.android.material.appbar.MaterialToolbar
 
 class SearchActivity : AppCompatActivity() {
+    companion object{
+        private const val SEARCH_TEXT_KEY = "SEARCH_TEXT"
+    }
     private lateinit var searchEditText: EditText
     private lateinit var clearButton: ImageView
     private var searchText: String = ""
@@ -30,16 +34,12 @@ class SearchActivity : AppCompatActivity() {
         searchEditText = findViewById(R.id.searchEditText)
         clearButton = findViewById(R.id.clearButton)
 
+        searchEditText.doOnTextChanged { text, start, before, count ->
 
 
-        val textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-                if (!s.isNullOrEmpty()) {
+                if (!text.isNullOrEmpty()) {
                     clearButton.visibility = View.VISIBLE
-                    searchText = s.toString()
+                    searchText = text.toString()
                 } else {
                     clearButton.visibility = View.GONE
                     searchText = ""
@@ -47,14 +47,9 @@ class SearchActivity : AppCompatActivity() {
 
             }
 
-            override fun afterTextChanged(s: Editable?) {}
-        }
-
-        searchEditText.addTextChangedListener(textWatcher)
-
 
         if (savedInstanceState != null) {
-            val savedText = savedInstanceState.getString("SEARCH_TEXT", "")
+            val savedText = savedInstanceState.getString(SEARCH_TEXT_KEY, "")
             if (savedText.isNotEmpty()) {
                 searchEditText.setText(savedText)
                 searchEditText.setSelection(savedText.length)
@@ -75,12 +70,12 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString("SEARCH_TEXT", searchText)
+        outState.putString(SEARCH_TEXT_KEY, searchText)
     }
 
     override fun onRestoreInstanceState(savedInstanceState: Bundle) {
         super.onRestoreInstanceState(savedInstanceState)
-        val savedText = savedInstanceState.getString("SEARCH_TEXT", "")
+        val savedText = savedInstanceState.getString(SEARCH_TEXT_KEY, "")
         if (savedText.isNotEmpty()) {
             searchEditText.setText(savedText)
             searchEditText.setSelection(savedText.length)
