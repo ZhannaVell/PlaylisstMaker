@@ -1,8 +1,6 @@
 package com.example.playlisstmaker
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -10,6 +8,7 @@ import android.widget.EditText
 import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.doOnTextChanged
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.appbar.MaterialToolbar
 
 class SearchActivity : AppCompatActivity() {
@@ -19,6 +18,8 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var searchEditText: EditText
     private lateinit var clearButton: ImageView
     private var searchText: String = ""
+    private lateinit var recyclerView: RecyclerView
+    private lateinit var adapter: TrackAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,6 +30,9 @@ class SearchActivity : AppCompatActivity() {
         toolbar.setNavigationOnClickListener {
             finish()
         }
+        recyclerView = findViewById(R.id.rvTracks)
+        adapter = TrackAdapter(MockData.trackList)
+        recyclerView.adapter = adapter
 
 
         searchEditText = findViewById(R.id.searchEditText)

@@ -17,8 +17,8 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="@dimen/horizontal"
-        android:layout_marginEnd="@dimen/horizontal"
+        android:layout_marginStart="@dimen/spacing_l"
+        android:layout_marginEnd="@dimen/spacing_l"
         android:layout_gravity="center_vertical"
         android:background="@drawable/search_edit_text_background">
 
@@ -27,8 +27,8 @@
             android:id="@+id/searchEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:paddingStart="@dimen/padding"
-            android:paddingVertical="@dimen/padding_s"
+            android:paddingStart="@dimen/spacing_xxxl"
+            android:paddingVertical="@dimen/spacing_m"
             android:background="@android:color/transparent"
             android:hint="@string/search"
             android:inputType="text"
@@ -43,7 +43,7 @@
             style="@style/Icon"
             android:src="@drawable/ic_search_16"
             android:layout_gravity="center_vertical"
-            android:layout_marginStart="@dimen/padding_s"
+            android:layout_marginStart="@dimen/spacing_m"
             app:tint="?attr/searchTint"/>
 
         <!--очистка иконка-->
@@ -53,11 +53,18 @@
             style="@style/Icon"
             android:layout_gravity="center_vertical|end"
             android:src="@drawable/ic_clear_16"
-            android:layout_marginEnd="@dimen/padding_s"
+            android:layout_marginEnd="@dimen/spacing_m"
             app:tint="?attr/searchTint"
             android:visibility="gone"
             tools:visibility="visible"
             tools:ignore="ContentDescription"/>
 
     </FrameLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvTracks"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:paddingTop="@dimen/spacing_xxl"
+        android:clipToPadding="false"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 </LinearLayout>
