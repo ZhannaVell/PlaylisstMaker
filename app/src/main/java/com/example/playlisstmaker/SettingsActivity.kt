@@ -22,5 +22,29 @@ class SettingsActivity : AppCompatActivity() {
         backButton.setNavigationOnClickListener {
             finish()
         }
+        shareItem.setOnClickListener {
+            val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                type = "text/plain"
+                putExtra(Intent.EXTRA_TEXT,getString(R.string.share_message))
+            }
+            startActivity(Intent.createChooser(shareIntent,null))
+        }
+        supportItem.setOnClickListener {
+            val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
+                data = Uri.parse("mailto:")
+                putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email)))
+                putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_subject))
+                putExtra(Intent.EXTRA_TEXT,getString(R.string.support_body))
+
+            }
+            startActivity(Intent.createChooser(emailIntent,null))
+        }
+        agreementItem.setOnClickListener {
+            val termsUrl = getString(R.string.terms_url)
+            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(termsUrl))
+            startActivity(browserIntent)
+        }
+
+
     }
 }

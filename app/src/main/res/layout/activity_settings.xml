@@ -4,18 +4,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="@color/white">
+    android:background="?attr/colorSurface">
 
     <!-- Заголовок с иконкой назад -->
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/tbSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:navigationIcon="@drawable/ic_back_arrow_24"
-        app:navigationIconTint="@color/black"
-        app:titleTextColor="@color/black"
-        app:titleTextAppearance="@style/titles"
+        style="@style/TitleIcBack"
         app:title="@string/settings" />
 
 
@@ -23,30 +18,14 @@
 
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/theme_switch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/horizontal"
-        android:paddingEnd="@dimen/horizontal"
-        android:paddingTop="@dimen/top"
-        android:paddingBottom="@dimen/top"
-        android:textSize="@dimen/text_size_body"
-        android:textColor="@color/black"
-
+        style="@style/Settings"
         android:text="@string/dark_theme" />
 
     <!-- Поделиться приложением -->
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_share"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/horizontal"
-        android:paddingEnd="@dimen/horizontal"
-        android:paddingTop="@dimen/top"
-        android:paddingBottom="@dimen/top"
-        android:textSize="@dimen/text_size_body"
-        android:textColor="@color/black"
-
+        style="@style/Settings"
         android:text="@string/share_app"
         android:drawableEnd="@drawable/ic_share_24"/>
 
@@ -54,15 +33,7 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_support"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/horizontal"
-        android:paddingEnd="@dimen/horizontal"
-        android:paddingTop="@dimen/top"
-        android:paddingBottom="@dimen/top"
-        android:textSize="@dimen/text_size_body"
-        android:textColor="@color/black"
-
+        style="@style/Settings"
         android:text="@string/write_to_support"
         android:drawableEnd="@drawable/ic_support_24"/>
 
@@ -70,15 +41,7 @@
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_agreement"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:paddingStart="@dimen/horizontal"
-        android:paddingEnd="@dimen/horizontal"
-        android:paddingTop="@dimen/top"
-        android:paddingBottom="@dimen/top"
-        android:textSize="@dimen/text_size_body"
-        android:textColor="@color/black"
-
+        style="@style/Settings"
         android:text="@string/user_agreement"
         android:drawableEnd="@drawable/ic_arrow_agreement_24"/>
 
