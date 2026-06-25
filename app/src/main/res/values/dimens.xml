@@ -8,13 +8,22 @@
     <dimen name="main_button_bottom">8dp</dimen>
     <dimen name="main_button_radius">16dp</dimen>
 
-    <!-- -->
-    <dimen name="horizontal">16dp</dimen>
-    <dimen name="top">20dp</dimen>
-    <dimen name="padding">48dp</dimen>
-    <dimen name="padding_s">12dp</dimen>
+    <!--базовые отступы-->
+
+    <dimen name="spacing_none">0dp</dimen>
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_s">8dp</dimen>
+    <dimen name="spacing_m">12dp</dimen>
+    <dimen name="spacing_l">16dp</dimen>
+    <dimen name="spacing_xl">20dp</dimen>
+    <dimen name="spacing_xxl">24dp</dimen>
+    <dimen name="spacing_xxxl">48dp</dimen>
+
+    <!--не базовые отступы-->
+    <dimen name="size_45">45dp</dimen>
 
     <!--text-->
+    <dimen name="text_size_body_s">11sp</dimen>
 
     <dimen name="text_size_body">16sp</dimen>
 
