@@ -13,6 +13,7 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
@@ -87,10 +88,10 @@ class SearchActivity : AppCompatActivity() {
 
 
                 if (!text.isNullOrEmpty()) {
-                    clearButton.visibility = View.VISIBLE
+                    clearButton.isVisible = true
                     searchText = text.toString()
                 } else {
-                    clearButton.visibility = View.GONE
+                    clearButton.isVisible = false
                     searchText = ""
                     clearResults()
                 }
@@ -138,8 +139,8 @@ class SearchActivity : AppCompatActivity() {
     override fun onConfigurationChanged(newConfig: Configuration) {
         super.onConfigurationChanged(newConfig)
 
-        if (placeholderContainer.visibility == View.VISIBLE) {
-            val isErrorState = errorSubtitle.visibility == View.VISIBLE
+        if (placeholderContainer.isVisible) {
+            val isErrorState = errorSubtitle.isVisible
             placeholderImage.setImageResource(getPlaceholderImage(isErrorState))
         }
     }
@@ -171,9 +172,9 @@ class SearchActivity : AppCompatActivity() {
         }
     }
     private fun showTracks(tracks: List<TrackDto>) {
-        progressBar.visibility = View.GONE
-        placeholderContainer.visibility = View.GONE
-        recyclerView.visibility = View.VISIBLE
+        progressBar.isVisible = false
+        placeholderContainer.isVisible = false        // ✅
+        recyclerView.isVisible = true
 
         val trackList = tracks.map {dto ->
             Track(
@@ -187,38 +188,38 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private  fun showLoading() {
-        progressBar.visibility = View.VISIBLE
-        recyclerView.visibility = View.GONE
-        placeholderContainer.visibility = View.GONE
+        progressBar.isVisible = true
+        recyclerView.isVisible = false
+        placeholderContainer.isVisible = false
     }
 
     private  fun showError() {
-        progressBar.visibility = View.GONE
-        recyclerView.visibility = View.GONE
-        placeholderContainer.visibility = View.VISIBLE
+        progressBar.isVisible = false
+        recyclerView.isVisible = false
+        placeholderContainer.isVisible = true
 
         placeholderImage.setImageResource(getPlaceholderImage(true))
         placeholderTitle.text = getString(R.string.error_network_title)
         errorSubtitle.text = getString(R.string.error_network_subtitle)
-        errorSubtitle.visibility = View.VISIBLE
-        retryButton.visibility = View.VISIBLE
+        errorSubtitle.isVisible = true
+        retryButton.isVisible = true
     }
 
     private fun showEmpty () {
-        progressBar.visibility = View.GONE
-        recyclerView.visibility = View.GONE
-        placeholderContainer.visibility = View.VISIBLE
+        progressBar.isVisible = false
+        recyclerView.isVisible = false
+        placeholderContainer.isVisible = true
 
         placeholderImage.setImageResource(getPlaceholderImage(false))
         placeholderTitle.text = getString(R.string.empty_result)
-        errorSubtitle.visibility = View.GONE
-        retryButton.visibility = View.GONE
+        errorSubtitle.isVisible = false
+        retryButton.isVisible = false
     }
     private fun clearResults () {
         adapter.updateTracks(emptyList())
-        progressBar.visibility = View.GONE
-        recyclerView.visibility = View.GONE
-        placeholderContainer.visibility = View.GONE
+        progressBar.isVisible = false
+        recyclerView.isVisible = false
+        placeholderContainer.isVisible = false
     }
     private  fun formatTime(millis: Long) : String {
         val totalSeconds = (millis / 1000).toInt()
