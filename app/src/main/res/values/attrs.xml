@@ -2,5 +2,7 @@
 <resources>
     <attr name="searchTint" format="color"/>
     <attr name="trackColor" format="color"/>
+    <attr name="retryButtonBackgroundTint" format="color" />
+    <attr name="retryButtonTextColor" format="color" />
 
 </resources>
