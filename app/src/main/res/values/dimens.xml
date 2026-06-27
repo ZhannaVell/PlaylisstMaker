@@ -20,11 +20,17 @@
     <dimen name="spacing_xxxl">48dp</dimen>
 
     <!--не базовые отступы-->
+    <dimen name="size_6">6dp</dimen>
     <dimen name="size_45">45dp</dimen>
+    <dimen name="size_54">54dp</dimen>
 
     <!--text-->
     <dimen name="text_size_body_s">11sp</dimen>
+    <dimen name="text_size_body_ss">14sp</dimen>
 
     <dimen name="text_size_body">16sp</dimen>
+
+    <dimen name="text_size_body_l">19sp</dimen>
+
 
 </resources>
