@@ -67,9 +67,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:src="@drawable/ic_dot_13"
-            android:tint="?attr/trackColor"
             app:layout_constraintBottom_toBottomOf="@id/tvArtistName"
-            app:layout_constraintStart_toEndOf="@id/tvArtistName" />
+            app:layout_constraintStart_toEndOf="@id/tvArtistName"
+            app:tint="?attr/trackColor" />
 
         <!-- Время -->
         <com.google.android.material.textview.MaterialTextView

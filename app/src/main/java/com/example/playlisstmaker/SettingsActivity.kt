@@ -2,13 +2,12 @@ package com.example.playlisstmaker
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
-import android.widget.ImageView
-import android.widget.LinearLayout
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.google.android.material.appbar.MaterialToolbar
+import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
 
 class SettingsActivity : AppCompatActivity() {
@@ -27,6 +26,13 @@ class SettingsActivity : AppCompatActivity() {
         val shareItem = findViewById<MaterialTextView>(R.id.tv_share)
         val supportItem = findViewById<MaterialTextView>(R.id.tv_support)
         val agreementItem = findViewById<MaterialTextView>(R.id.tv_agreement)
+
+        val themeSwitcher = findViewById<SwitchMaterial>(R.id.theme_switch)
+        themeSwitcher.isChecked = (applicationContext as App).darkTheme
+        themeSwitcher.setOnCheckedChangeListener {_, isChecked ->
+            (applicationContext as App).switchTheme(isChecked)
+
+        }
 
         backButton.setNavigationOnClickListener {
             finish()

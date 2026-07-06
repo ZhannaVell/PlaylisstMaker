@@ -13,6 +13,18 @@
         <item name="retryButtonTextColor">@color/black</item>
     </style>
 
+    <style name="ThemeOverlay.Placeholder">
+        <item name="colorOnSurface">@color/white</item>
+
+
+    </style>
+
+    <style name="ThemeOverlay">
+        <item name="colorOnSurface">@color/white</item>
+
+
+    </style>
+
 
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker" />
 </resources>
