@@ -17,12 +17,14 @@
 
     <!--темная тема-->
 
+    <!-- Поделиться приложением -->
+
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/theme_switch"
         style="@style/Settings"
         android:text="@string/dark_theme"
-        android:thumbTint="?attr/colorPrimary"
-        android:trackTint="?attr/colorPrimary"/>
+        app:thumbTint="?attr/switch_thumb"
+        app:trackTint="?attr/switch_track" />
 
     <!-- Поделиться приложением -->
 

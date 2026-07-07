@@ -4,5 +4,7 @@
     <attr name="trackColor" format="color"/>
     <attr name="retryButtonBackgroundTint" format="color" />
     <attr name="retryButtonTextColor" format="color" />
+    <attr name="switch_track" format= "color"/>
+    <attr name="switch_thumb" format= "color"/>
 
 </resources>

@@ -63,8 +63,10 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        val sharedPrefs = getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE)
+        searchHistory = SearchHistory(sharedPrefs)
+
         setupEdgeToEdge()
-        setupHistory()
         setupToolbar()
         setupRecyclerView()
         setupHistoryRecyclerView()
@@ -80,11 +82,6 @@ class SearchActivity : AppCompatActivity() {
             view.updatePadding(top = statusBar.top)
             insets
         }
-    }
-
-    private fun setupHistory() {
-        val sharedPrefs = this.getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE)
-        searchHistory = SearchHistory(sharedPrefs)
     }
 
     private fun setupToolbar() {
