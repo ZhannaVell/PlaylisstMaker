@@ -26,6 +26,7 @@ import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 
 import com.google.android.material.textview.MaterialTextView
+import com.google.gson.Gson
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -63,10 +64,10 @@ class SearchActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
-        val sharedPrefs = getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE)
-        searchHistory = SearchHistory(sharedPrefs)
+
 
         setupEdgeToEdge()
+        setupHistory()
         setupToolbar()
         setupRecyclerView()
         setupHistoryRecyclerView()
@@ -75,6 +76,13 @@ class SearchActivity : AppCompatActivity() {
         updateHistoryVisibility()
     }
     //ИНИЦИАЛИЗАЦИЯ
+
+    private fun setupHistory() {
+        val sharedPrefs = getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE)
+
+        val gson = Gson()
+        searchHistory = SearchHistory(sharedPrefs, gson)
+    }
 
     private fun setupEdgeToEdge() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root)) { view, insets ->

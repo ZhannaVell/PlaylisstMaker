@@ -6,10 +6,11 @@ import com.google.gson.reflect.TypeToken
 import kotlin.collections.emptyList
 
 class SearchHistory(
-    private val sharedPreferences: SharedPreferences
+    private val sharedPreferences: SharedPreferences,
+    private val gson : Gson
 ) {
 
-    private val gson = Gson()
+
 
     fun getHistory(): List<Track> {
         val json = sharedPreferences.getString(Constants.HISTORY_KEY, null)
