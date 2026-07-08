@@ -56,9 +56,56 @@
 
     </FrameLayout>
 
-    <FrameLayout
+    <!--история поиска -->
+    <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="@dimen/spacing_none"
+        android:layout_height="wrap_content">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/historyTitle"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/size_54"
+        android:fontFamily="@font/ys_display_medium"
+        android:text="@string/user_search"
+        android:textColor="?attr/colorOnSurface"
+        android:textSize="@dimen/text_size_body_l"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/historyRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:visibility="gone"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
+
+    <!--очистить историю-->
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/clearHistoryButton"
+        style="@style/Widget.PlaylistMaker.Button.Retry"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="@dimen/spacing_xxl"
+        android:text="@string/clear_history"
+        android:visibility="gone"
+        tools:visibility="visible" />
+
+    </LinearLayout>
+</ScrollView>
+
+
+
+<FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
         android:layout_weight="1">
 
 
@@ -85,13 +132,13 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:orientation="vertical"
-
+            android:theme="@style/ThemeOverlay.Placeholder"
             android:visibility="gone"
             tools:visibility="visible">
 
             <Space
                 android:layout_width="match_parent"
-                android:layout_height="@dimen/spacing_none"
+                android:layout_height="0dp"
                 android:layout_weight="0.1" />
 
 
@@ -124,8 +171,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="@dimen/spacing_xxl"
-                android:text="@string/retry_button"
-                tools:visibility="visible"/>
+                android:text="@string/retry_button" />
 
 
             <Space

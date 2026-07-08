@@ -1,7 +1,8 @@
 package com.example.playlisstmaker
 
-import android.content.res.Configuration
+
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
@@ -17,10 +18,13 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlisstmaker.Constants.SEARCH_TEXT_KEY
+import com.example.playlisstmaker.Constants.SETTINGS_PREFERENCES
 import com.example.playlisstmaker.network.RetrofitClient
 import com.example.playlisstmaker.network.TrackDto
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
+
 import com.google.android.material.textview.MaterialTextView
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -29,50 +33,95 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class SearchActivity : AppCompatActivity() {
-    companion object{
-        private const val SEARCH_TEXT_KEY = "SEARCH_TEXT"
-    }
+
+    // VIEWS
     private lateinit var searchEditText: EditText
     private lateinit var clearButton: ImageView
-    private var searchText: String = ""
     private lateinit var recyclerView: RecyclerView
     private lateinit var adapter: TrackAdapter
     private lateinit var progressBar: ProgressBar
 
+    //PLACEHOLDERS
     private lateinit var placeholderContainer: LinearLayout
     private lateinit var placeholderTitle: MaterialTextView
     private lateinit var placeholderImage: ImageView
     private lateinit var errorSubtitle: MaterialTextView
     private lateinit var retryButton: MaterialButton
 
+    //HISTORY
+    private lateinit var searchHistory: SearchHistory
+    private lateinit var historyAdapter: TrackAdapter
+    private lateinit var historyRecyclerView: RecyclerView
+    private lateinit var historyTitle: TextView
+    private lateinit var clearHistoryButton: MaterialButton
 
-
+    //DATA
+    private var searchText: String = ""
     private var searchJob: Job? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_search)
 
+        val sharedPrefs = getSharedPreferences(SETTINGS_PREFERENCES, MODE_PRIVATE)
+        searchHistory = SearchHistory(sharedPrefs)
+
+        setupEdgeToEdge()
+        setupToolbar()
+        setupRecyclerView()
+        setupHistoryRecyclerView()
+        setupViews()
+        setupListeners()
+        updateHistoryVisibility()
+    }
+    //ИНИЦИАЛИЗАЦИЯ
+
+    private fun setupEdgeToEdge() {
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.root)) { view, insets ->
             val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
             view.updatePadding(top = statusBar.top)
             insets
         }
+    }
 
-
+    private fun setupToolbar() {
         val toolbar = findViewById<MaterialToolbar>(R.id.tbSearch)
         toolbar.setNavigationOnClickListener {
             finish()
         }
+    }
+
+    private fun setupRecyclerView() {
         recyclerView = findViewById(R.id.rvTracks)
-        adapter = TrackAdapter(emptyList())
+        adapter = TrackAdapter(emptyList()) { track ->
+            searchHistory.addTrack(track)
+            updateHistoryVisibility()
+        }
         recyclerView.adapter = adapter
 
+    }
 
+    private fun setupHistoryRecyclerView() {
+        historyTitle = findViewById(R.id.historyTitle)
+        historyRecyclerView = findViewById(R.id.historyRecyclerView)
+        clearHistoryButton = findViewById(R.id.clearHistoryButton)
+
+        historyAdapter = TrackAdapter(emptyList()) { track ->
+            searchHistory.addTrack(track)
+            updateHistoryVisibility()
+        }
+        historyRecyclerView.adapter = historyAdapter
+
+        clearHistoryButton.setOnClickListener {
+            searchHistory.clearHistory()
+            updateHistoryVisibility()
+        }
+    }
+
+    private fun setupViews() {
         searchEditText = findViewById(R.id.searchEditText)
         clearButton = findViewById(R.id.clearButton)
         progressBar = findViewById(R.id.progressBar)
-
 
         placeholderContainer = findViewById(R.id.placeholderContainer)
         placeholderImage = findViewById(R.id.placeholderImage)
@@ -80,36 +129,34 @@ class SearchActivity : AppCompatActivity() {
         errorSubtitle = findViewById(R.id.errorSubtitle)
         retryButton = findViewById(R.id.retryButton)
 
-        retryButton.setOnClickListener {
-            performSearch()
-        }
+    }
+
+    private fun setupListeners() {
+        retryButton.setOnClickListener { performSearch() }
 
         searchEditText.doOnTextChanged { text, start, before, count ->
 
 
-                if (!text.isNullOrEmpty()) {
-                    clearButton.isVisible = true
-                    searchText = text.toString()
-                } else {
-                    clearButton.isVisible = false
-                    searchText = ""
-                    clearResults()
-                }
-
-            }
-
-
-        if (savedInstanceState != null) {
-            val savedText = savedInstanceState.getString(SEARCH_TEXT_KEY, "")
-            if (savedText.isNotEmpty()) {
-                searchEditText.setText(savedText)
-                searchEditText.setSelection(savedText.length)
+            if (!text.isNullOrEmpty()) {
+                clearButton.isVisible = true
+                searchText = text.toString()
+                hideHistory()
+            } else {
+                clearButton.isVisible = false
+                searchText = ""
+                clearResults()
+                updateHistoryVisibility()
             }
         }
+        searchEditText.setOnFocusChangeListener { _, _ ->
+            updateHistoryVisibility()
+        }
+
         clearButton.setOnClickListener {
             searchEditText.setText("")
             hideKeyboard()
             clearResults()
+            updateHistoryVisibility()
 
         }
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
@@ -120,64 +167,92 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
-    private fun isDarkTheme(): Boolean {
-        val currentNightMode = resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK
-        return currentNightMode == Configuration.UI_MODE_NIGHT_YES
+
+    //ИСТОРИЯ
+
+    private fun updateHistoryVisibility() {
+        val history = searchHistory.getHistory()
+        val hasHistory = history.isNotEmpty()
+        val isSearchEmpty = searchEditText.text.isNullOrEmpty()
+        val isFocused = searchEditText.hasFocus()
+
+        val shouldShowHistory = hasHistory && isSearchEmpty && isFocused
+
+        historyTitle.visibility = if (shouldShowHistory) View.VISIBLE else View.GONE
+        historyRecyclerView.visibility = if (shouldShowHistory) View.VISIBLE else View.GONE
+        clearHistoryButton.visibility = if (shouldShowHistory) View.VISIBLE else View.GONE
+
+        if (shouldShowHistory) {
+            historyAdapter.updateTracks(history)
+        }
     }
+
+    private fun showHistory() {
+        updateHistoryVisibility()
+    }
+
+    private fun hideHistory() {
+        historyTitle.isVisible = false
+        historyRecyclerView.isVisible = false
+        clearHistoryButton.isVisible = false
+    }
+
+    //ПОИСК
+
     private fun getPlaceholderImage(isNetworkError: Boolean): Int {
-        return if (isDarkTheme()) {
+        return if (isNetworkError) {
 
-            if (isNetworkError) R.drawable.ic_error_network_dark_120
-            else R.drawable.ic_error_empty_dark_120
+            R.drawable.ic_error_network_120
+
         } else {
+            R.drawable.ic_error_empty_120
 
-            if (isNetworkError) R.drawable.ic_error_network_120
-            else R.drawable.ic_error_empty_120
+
         }
     }
 
-    override fun onConfigurationChanged(newConfig: Configuration) {
-        super.onConfigurationChanged(newConfig)
-
-        if (placeholderContainer.isVisible) {
-            val isErrorState = errorSubtitle.isVisible
-            placeholderImage.setImageResource(getPlaceholderImage(isErrorState))
-        }
-    }
 
     private fun performSearch() {
         val query = searchEditText.text.toString().trim()
-        if(query.isEmpty()) return
+        Log.d("SearchActivity", "🔍 Поиск: '$query'")
+        if (query.isEmpty()) return
 
         hideKeyboard()
         showLoading()
+        hideHistory()
 
         searchJob?.cancel()
         searchJob = CoroutineScope(Dispatchers.IO).launch {
             try {
+                Log.d("SearchActivity", "Отправка запроса...")
                 val response = RetrofitClient.api.searchTracks(query)
+                Log.d("SearchActivity", "Ответ получен, resultCount: ${response.resultCount}")
                 withContext(Dispatchers.Main) {
-                    if(response.resultCount > 0) {
+                    if (response.resultCount > 0) {
                         showTracks(response.results)
 
-                    }else{
+                    } else {
                         showEmpty()
                     }
                 }
-            }catch (e: Exception) {
+            } catch (e: Exception) {
+                Log.e("SearchActivity", "ОШИБКА: ${e.message}", e)
                 withContext(Dispatchers.Main) {
                     showError()
                 }
             }
         }
     }
+
+    //СОСТОЯНИЕ
     private fun showTracks(tracks: List<TrackDto>) {
         progressBar.isVisible = false
-        placeholderContainer.isVisible = false        // ✅
+        placeholderContainer.isVisible = false
         recyclerView.isVisible = true
 
-        val trackList = tracks.map {dto ->
+        val trackList = tracks.map { dto ->
             Track(
+                trackId = dto.trackId,
                 trackName = dto.trackName ?: "Unknown",
                 artistName = dto.artistName ?: "Unknown",
                 trackTime = formatTime(dto.trackTimeMillis ?: 0),
@@ -187,13 +262,13 @@ class SearchActivity : AppCompatActivity() {
         adapter.updateTracks(trackList)
     }
 
-    private  fun showLoading() {
+    private fun showLoading() {
         progressBar.isVisible = true
         recyclerView.isVisible = false
         placeholderContainer.isVisible = false
     }
 
-    private  fun showError() {
+    private fun showError() {
         progressBar.isVisible = false
         recyclerView.isVisible = false
         placeholderContainer.isVisible = true
@@ -205,7 +280,7 @@ class SearchActivity : AppCompatActivity() {
         retryButton.isVisible = true
     }
 
-    private fun showEmpty () {
+    private fun showEmpty() {
         progressBar.isVisible = false
         recyclerView.isVisible = false
         placeholderContainer.isVisible = true
@@ -215,18 +290,23 @@ class SearchActivity : AppCompatActivity() {
         errorSubtitle.isVisible = false
         retryButton.isVisible = false
     }
-    private fun clearResults () {
+
+    private fun clearResults() {
         adapter.updateTracks(emptyList())
         progressBar.isVisible = false
         recyclerView.isVisible = false
         placeholderContainer.isVisible = false
+        hideHistory()
     }
-    private  fun formatTime(millis: Long) : String {
+
+    private fun formatTime(millis: Long): String {
         val totalSeconds = (millis / 1000).toInt()
         val minutes = totalSeconds / 60
         val seconds = totalSeconds % 60
         return "%02d:%02d".format(minutes, seconds)
     }
+
+    //ДОПОЛНИТЕЛЬНО сохранение, восстановление, скрытие клавиатуры
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)

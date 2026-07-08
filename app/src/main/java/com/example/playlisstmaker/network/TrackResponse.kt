@@ -10,6 +10,8 @@ data class TrackResponse(
 )
 
 data class TrackDto(
+    @SerializedName("trackId")
+    val trackId: Long,
     @SerializedName("trackName")
     val trackName: String?,
     @SerializedName("artistName")
