@@ -55,6 +55,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var historyRecyclerView: RecyclerView
     private lateinit var historyTitle: TextView
     private lateinit var clearHistoryButton: MaterialButton
+    private lateinit var cacheContainer: LinearLayout
 
     //DATA
     private var searchText: String = ""
@@ -136,6 +137,7 @@ class SearchActivity : AppCompatActivity() {
         placeholderTitle = findViewById(R.id.placeholderTitle)
         errorSubtitle = findViewById(R.id.errorSubtitle)
         retryButton = findViewById(R.id.retryButton)
+        cacheContainer = findViewById(R.id.llCacheContainer)
 
     }
 
@@ -185,6 +187,7 @@ class SearchActivity : AppCompatActivity() {
         val isFocused = searchEditText.hasFocus()
 
         val shouldShowHistory = hasHistory && isSearchEmpty && isFocused
+        cacheContainer.visibility = if (shouldShowHistory) View.VISIBLE else View.GONE
 
         historyTitle.visibility = if (shouldShowHistory) View.VISIBLE else View.GONE
         historyRecyclerView.visibility = if (shouldShowHistory) View.VISIBLE else View.GONE
@@ -200,6 +203,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun hideHistory() {
+        cacheContainer.isVisible = false
         historyTitle.isVisible = false
         historyRecyclerView.isVisible = false
         clearHistoryButton.isVisible = false
