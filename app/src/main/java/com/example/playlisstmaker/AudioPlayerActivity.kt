@@ -15,11 +15,14 @@ import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlisstmaker.utils.getParcelableExtraCompat
 import com.google.android.material.appbar.MaterialToolbar
 
 
 class AudioPlayerActivity: AppCompatActivity() {
-    private var track: Track? = null
+    private var _track: Track? = null
+    private val track: Track get() = _track!!
+
     private var isPlaying = false
     private var isFavorite = false
 
@@ -65,13 +68,9 @@ class AudioPlayerActivity: AppCompatActivity() {
             insets
         }
 
+        _track = intent.getParcelableExtraCompat(Constants.TRACK_EXTRA)
+            ?: throw IllegalArgumentException(Constants.ERROR_TRACK_MISSING)
 
-        track = if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
-            intent.getParcelableExtra(Constants.TRACK_EXTRA, Track::class.java)
-        } else {
-            @Suppress("DEPRECATION")
-            intent.getParcelableExtra(Constants.TRACK_EXTRA) as? Track
-        } ?: throw IllegalArgumentException(Constants.ERROR_TRACK_MISSING)
 
         initViews()
         bindData()
@@ -105,26 +104,26 @@ class AudioPlayerActivity: AppCompatActivity() {
     }
 
     private fun bindData() {
-        val currentTrack = track ?: return
-        val album = currentTrack.collectionName
-        val year = currentTrack.releaseDate?.take(4)?.takeIf { it.isNotEmpty() }
+
+        val album = track.collectionName
+        val year = track.releaseDate?.take(4)
 
         val trackNameWithAlbum = if (album != null || year != null) {
             val parts = mutableListOf<String>()
             album?.let { parts.add(it) }
             year?.let { parts.add(it) }
-            "${currentTrack.trackName} (${parts.joinToString(" ")})"
+            "${track.trackName} (${parts.joinToString(" ")})"
         } else {
-            currentTrack.trackName
+            track.trackName
         }
         tvTrackName.text = trackNameWithAlbum
-        tvArtistName.text = currentTrack.artistName
+        tvArtistName.text = track.artistName
 
 
-        tvDurationRight.text = currentTrack.trackTime
+        tvDurationRight.text = track.trackTime
 
-        if (!currentTrack.collectionName.isNullOrEmpty()) {
-            tvAlbumRight.text = currentTrack.collectionName
+        if (!track.collectionName.isNullOrEmpty()) {
+            tvAlbumRight.text = track.collectionName
             tvAlbumRight.isVisible = true
         } else {
             tvAlbumRight.isVisible = false
@@ -137,15 +136,15 @@ class AudioPlayerActivity: AppCompatActivity() {
             tvYearRight.isVisible = false
         }
 
-        if (!currentTrack.primaryGenreName.isNullOrEmpty()) {
-            tvGenreRight.text = currentTrack.primaryGenreName
+        if (!track.primaryGenreName.isNullOrEmpty()) {
+            tvGenreRight.text = track.primaryGenreName
             tvGenreRight.isVisible = true
         } else {
             tvGenreRight.isVisible = false
         }
 
-        if (!currentTrack.country.isNullOrEmpty()) {
-            tvCountryRight.text = currentTrack.country
+        if (!track.country.isNullOrEmpty()) {
+            tvCountryRight.text = track.country
             tvCountryRight.isVisible = true
         } else {
             tvCountryRight.isVisible = false
@@ -160,8 +159,8 @@ class AudioPlayerActivity: AppCompatActivity() {
         val cornerRadius = resources.getDimensionPixelSize(R.dimen.spacing_s)
         Glide.with(this)
             .load(currentTrack.getCoverArtwork())
-            .placeholder(R.drawable.ic_placeholder_512)
-            .error(R.drawable.ic_placeholder_512)
+            .placeholder(R.drawable.ic_placeholder_45)
+            .error(R.drawable.ic_placeholder_45)
             .centerCrop()
             .transform(RoundedCorners(cornerRadius))
             .into(ivCover)

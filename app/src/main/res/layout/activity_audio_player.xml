@@ -48,7 +48,7 @@
             app:layout_constraintEnd_toEndOf="@id/rightGuideline"
             app:layout_constraintTop_toBottomOf="@id/tbAudioPlayer"
             android:layout_marginTop="@dimen/spacing_l"
-            tools:src="@drawable/ic_placeholder_512"/>
+            tools:src="@drawable/ic_placeholder_45"/>
 
         <!-- 3. Название трека -->
         <TextView
