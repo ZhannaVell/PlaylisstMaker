@@ -1,6 +1,7 @@
 package com.example.playlisstmaker
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
@@ -103,6 +104,7 @@ class SearchActivity : AppCompatActivity() {
     private fun setupRecyclerView() {
         recyclerView = findViewById(R.id.rvTracks)
         adapter = TrackAdapter(emptyList()) { track ->
+            openAudioPlayer(track)
             searchHistory.addTrack(track)
             updateHistoryVisibility()
         }
@@ -116,6 +118,7 @@ class SearchActivity : AppCompatActivity() {
         clearHistoryButton = findViewById(R.id.clearHistoryButton)
 
         historyAdapter = TrackAdapter(emptyList()) { track ->
+            openAudioPlayer(track)
             searchHistory.addTrack(track)
             updateHistoryVisibility()
         }
@@ -125,6 +128,12 @@ class SearchActivity : AppCompatActivity() {
             searchHistory.clearHistory()
             updateHistoryVisibility()
         }
+    }
+
+    private fun openAudioPlayer (track:Track) {
+        val intent = Intent(this, AudioPlayerActivity::class.java)
+        intent.putExtra(Constants.TRACK_EXTRA, track)
+        startActivity(intent)
     }
 
     private fun setupViews() {
@@ -268,7 +277,11 @@ class SearchActivity : AppCompatActivity() {
                 trackName = dto.trackName ?: "Unknown",
                 artistName = dto.artistName ?: "Unknown",
                 trackTime = formatTime(dto.trackTimeMillis ?: 0),
-                artworkUrl100 = dto.artworkUrl100 ?: ""
+                artworkUrl100 = dto.artworkUrl100 ?: "",
+                collectionName = dto.collectionName,
+                releaseDate = dto.releaseDate,
+                primaryGenreName = dto.primaryGenreName,
+                country = dto.country
             )
         }
         adapter.updateTracks(trackList)

@@ -6,5 +6,6 @@
     <attr name="retryButtonTextColor" format="color" />
     <attr name="switch_track" format= "color"/>
     <attr name="switch_thumb" format= "color"/>
+    <attr name="audioPlayerIconColor" format="color"/>
 
 </resources>
