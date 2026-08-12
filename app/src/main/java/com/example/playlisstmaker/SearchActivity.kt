@@ -196,14 +196,16 @@ class SearchActivity : AppCompatActivity() {
                 updateHistoryVisibility()
             }
         }
-        historyRecyclerView.adapter = historyAdapter
+
+
+            historyRecyclerView.adapter = historyAdapter
 
             clearHistoryButton.setOnClickListener {
                 searchHistory.clearHistory()
                 updateHistoryVisibility()
             }
+        }
 
-    }
 
     private fun searchDebounce() {
         handler.removeCallbacks(searchRunnable)
