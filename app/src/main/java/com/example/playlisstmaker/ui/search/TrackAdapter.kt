@@ -1,8 +1,10 @@
-package com.example.playlisstmaker
+package com.example.playlisstmaker.ui.search
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.example.playlisstmaker.R
+import com.example.playlisstmaker.domain.models.Track
 
 class TrackAdapter(
     private var tracks: List<Track>,

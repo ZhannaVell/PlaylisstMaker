@@ -1,50 +1,42 @@
-package com.example.playlisstmaker
+package com.example.playlisstmaker.ui.audioplayer
 
-import android.media.MediaPlayer
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.util.Log
-
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.example.playlisstmaker.domain.api.AudioPlayerInteractor
+import com.example.playlisstmaker.domain.models.AudioPlayerState
+import com.example.playlisstmaker.utils.Constants
+import com.example.playlisstmaker.data.media.ProgressTimer
+import com.example.playlisstmaker.R
+import com.example.playlisstmaker.di.Creator
+import com.example.playlisstmaker.domain.models.Track
+import com.example.playlisstmaker.utils.ImageUrlHelper
 import com.example.playlisstmaker.utils.getParcelableExtraCompat
 import com.google.android.material.appbar.MaterialToolbar
-import java.text.SimpleDateFormat
-import java.util.Locale
-
 
 class AudioPlayerActivity : AppCompatActivity() {
     companion object {
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
-        private const val UPDATE_INTERVAL = 300L
+
 
         private const val TAG = "AudioPlayer"
     }
-    private val handler = Handler(Looper.getMainLooper())
-    private  val audioRunnable = Runnable {
-        updateCurrentTime()
-    }
 
-    private var playerState = STATE_DEFAULT
-    private var mediaPlayer : MediaPlayer? = null
 
     private var _track: Track? = null
     private val track: Track
         get() = requireNotNull(_track)
+
+    private lateinit var interactor: AudioPlayerInteractor
+    private lateinit var progressTimer: ProgressTimer
 
     private var isPlaying = false
     private var isFavorite = false
@@ -69,13 +61,13 @@ class AudioPlayerActivity : AppCompatActivity() {
     private lateinit var tvYearRight: TextView
     private lateinit var tvGenreRight: TextView
     private lateinit var tvCountryRight: TextView
-//Кнопки
+
+    //Кнопки
     private lateinit var btnAddToPlaylist: ImageButton
     private lateinit var btnPlay: ImageButton
     private lateinit var btnFavorite: ImageButton
 
     private lateinit var tvProgressTime: TextView
-
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -85,8 +77,46 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         setupWindowInsets()
 
-        _track = intent.getParcelableExtraCompat(Constants.TRACK_EXTRA)
-            ?: throw IllegalArgumentException(Constants.ERROR_TRACK_MISSING)
+        _track = if (savedInstanceState != null) {
+            savedInstanceState.getParcelable(Constants.TRACK_STATE_KEY)
+        } else {
+            intent.getParcelableExtraCompat(Constants.TRACK_EXTRA)
+        }
+
+        if (_track == null) {
+            throw IllegalArgumentException(Constants.ERROR_TRACK_MISSING)
+        }
+
+
+        progressTimer = Creator.provideProgressTimer(
+            onTimeUpdate = { time ->
+                tvProgressTime.text = time
+            }
+        )
+
+        val mediaPlayerManager = Creator.provideMediaPlayerManager(
+            onPrepared = {
+                btnPlay.isEnabled = true
+                updatePlayButton()
+            },
+            onCompletion = {
+                updatePlayButton()
+                tvProgressTime.text = getString(R.string.progress_time_format)
+            },
+            onError = {
+                btnPlay.isEnabled = false
+                updatePlayButton()
+            },
+            onStateChanged = { state ->
+                updatePlayButton()
+            }
+        )
+
+        interactor = Creator.provideAudioPlayerInteractor(
+            mediaPlayerManager,
+            progressTimer
+        )
+
 
 
         initViews()
@@ -94,18 +124,24 @@ class AudioPlayerActivity : AppCompatActivity() {
         setupListeners()
         preparePlayer()
 
+
     }
+
     override fun onPause() {
         super.onPause()
-        if (playerState == STATE_PLAYING) {
-            pausePlayer()
+        if (interactor.getState() == AudioPlayerState.PLAYING) {
+            interactor.pause()
+
         }
     }
+
     override fun onDestroy() {
-        releasePlayer()
+        interactor.release()
+
         super.onDestroy()
 
     }
+
     private fun setupWindowInsets() {
         ViewCompat.setOnApplyWindowInsetsListener(
             findViewById(R.id.root)
@@ -121,132 +157,49 @@ class AudioPlayerActivity : AppCompatActivity() {
             insets
         }
     }
+
     private fun preparePlayer() {
         val previewUrl = track.previewUrl
-
-        if(previewUrl.isNullOrEmpty()) {
+        if (previewUrl.isNullOrEmpty()) {
             Log.d(TAG, "Track doesn't contain previewUrl")
             btnPlay.isEnabled = false
             return
         }
-        releasePlayer()
-
-        val player = MediaPlayer()
-        mediaPlayer = player
-
-        try {
-
-                player.setOnPreparedListener {
-                    btnPlay.isEnabled = true
-                    playerState = STATE_PREPARED
-                    updatePlayButton()
-                }
-
-                player.setOnCompletionListener {
-                    playerState = STATE_PREPARED
-                    updatePlayButton()
-                    handler.removeCallbacks(audioRunnable)
-                    tvProgressTime.text = getString(R.string.progress_time_format)
-                }
-
-                player.setOnErrorListener { _, what, extra ->
-                    Log.e(TAG, "MediaPlayer error: what=$what, extra=$extra")
-                    btnPlay.isEnabled = false
-                    playerState = STATE_DEFAULT
-                    updatePlayButton()
-                    handler.removeCallbacks(audioRunnable)
-                    true
-                }
-
-                player.setDataSource(previewUrl)
-                player.prepareAsync()
-
-        } catch (e: Exception) {
-            Log.e(TAG, "Failed to prepare MediaPlayer", e)
-
-            releasePlayer()
-        }
-    }
-
-    private fun updateCurrentTime() {
-        if (playerState == STATE_PLAYING) {
-            val player = mediaPlayer ?: return
-
-            val currentPosition = player.currentPosition
-            tvProgressTime.text = formatTime(currentPosition)
-
-            handler.postDelayed(audioRunnable, UPDATE_INTERVAL)
-        }
-    }
-    private fun formatTime(millis: Int): String {
-        return SimpleDateFormat("mm:ss", Locale.getDefault()).format(millis)
+        interactor.prepare(previewUrl)
     }
 
 
-    private fun startPlayer() {
-        val player = mediaPlayer ?: return
-        if (!player.isPlaying) {
-
-            player.start()
-        }
-        playerState = STATE_PLAYING
-        updatePlayButton()
-        handler.post(audioRunnable)
-    }
-
-    private fun pausePlayer() {
-        val player = mediaPlayer ?: return
-
-        if (player.isPlaying) {
-            player.pause()
-        }
-        playerState = STATE_PAUSED
-        updatePlayButton()
-        handler.removeCallbacks(audioRunnable)
-    }
     private fun playbackControl() {
-        when(playerState) {
-            STATE_PREPARED, STATE_PAUSED -> {
-                startPlayer()
+        when (interactor.getState()) {
+            AudioPlayerState.PREPARED, AudioPlayerState.PAUSED -> {
+                interactor.start()
+
             }
-            STATE_PLAYING -> {
-                pausePlayer()
+
+            AudioPlayerState.PLAYING -> {
+                interactor.pause()
+
             }
-            STATE_DEFAULT -> {
+
+            AudioPlayerState.DEFAULT -> {
                 Log.d(TAG, "Player isn't ready")
             }
 
         }
     }
+
     private fun updatePlayButton() {
-        when (playerState) {
-            STATE_PLAYING -> {
+        when (interactor.getState()) {
+            AudioPlayerState.PLAYING -> {
                 btnPlay.setImageResource(R.drawable.ic_pause_100)
             }
-            STATE_PREPARED, STATE_PAUSED, STATE_DEFAULT -> {
+
+            AudioPlayerState.PREPARED, AudioPlayerState.PAUSED, AudioPlayerState.DEFAULT -> {
                 btnPlay.setImageResource(R.drawable.ic_play_100)
             }
         }
     }
-    private fun releasePlayer() {
-        handler.removeCallbacks(audioRunnable)
-        val player = mediaPlayer
-        if (player != null) {
-            try {
-                if (player.isPlaying) {
-                    player.stop()
-                }
-                player.release()
-            } catch (e: Exception) {
-                Log.e(TAG, "Error releasing MediaPlayer", e)
-            }
-            mediaPlayer = null
-        }
 
-        playerState = STATE_DEFAULT
-        btnPlay.isEnabled = false
-        btnPlay.setImageResource(R.drawable.ic_play_100)
-    }
 
     private fun initViews() {
         tbAudioPlayer = findViewById(R.id.tbAudioPlayer)
@@ -325,11 +278,12 @@ class AudioPlayerActivity : AppCompatActivity() {
         tvProgressTime.text = getString(R.string.progress_time_format)
         loadCover()
     }
+
     private fun loadCover() {
 
         val cornerRadius = resources.getDimensionPixelSize(R.dimen.spacing_s)
         Glide.with(this)
-            .load(track.getCoverArtwork())
+            .load(ImageUrlHelper.getCoverArtwork(track.artworkUrl100))
             .placeholder(R.drawable.ic_placeholder_45)
             .error(R.drawable.ic_placeholder_45)
             .centerCrop()
@@ -356,8 +310,11 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
     }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        _track?.let {
+            outState.putParcelable(Constants.TRACK_STATE_KEY, it)
+        }
+    }
+
 }
-
-
-
-

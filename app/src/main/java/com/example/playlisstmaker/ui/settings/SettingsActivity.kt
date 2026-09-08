@@ -1,12 +1,15 @@
-package com.example.playlisstmaker
+package com.example.playlisstmaker.ui.settings
+
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
-import androidx.appcompat.widget.SwitchCompat
+import androidx.core.net.toUri
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import com.example.playlisstmaker.App
+import com.example.playlisstmaker.R
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.switchmaterial.SwitchMaterial
 import com.google.android.material.textview.MaterialTextView
@@ -47,7 +50,7 @@ class SettingsActivity : AppCompatActivity() {
         }
         supportItem.setOnClickListener {
             val emailIntent = Intent(Intent.ACTION_SENDTO).apply {
-                data = Uri.parse("mailto:")
+                data = "mailto:".toUri()
                 putExtra(Intent.EXTRA_EMAIL, arrayOf(getString(R.string.support_email)))
                 putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_subject))
                 putExtra(Intent.EXTRA_TEXT,getString(R.string.support_body))
@@ -57,7 +60,7 @@ class SettingsActivity : AppCompatActivity() {
         }
         agreementItem.setOnClickListener {
             val termsUrl = getString(R.string.terms_url)
-            val browserIntent = Intent(Intent.ACTION_VIEW, Uri.parse(termsUrl))
+            val browserIntent = Intent(Intent.ACTION_VIEW, (termsUrl.toUri()))
             startActivity(browserIntent)
         }
 

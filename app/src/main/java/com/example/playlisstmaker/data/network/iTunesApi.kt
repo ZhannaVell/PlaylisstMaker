@@ -1,5 +1,6 @@
-package com.example.playlisstmaker.network
+package com.example.playlisstmaker.data.network
 
+import com.example.playlisstmaker.data.dto.TrackResponse
 import retrofit2.http.GET
 import retrofit2.http.Query
 

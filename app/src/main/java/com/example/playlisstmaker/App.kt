@@ -2,8 +2,8 @@ package com.example.playlisstmaker
 
 import android.app.Application
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlisstmaker.Constants.DARK_THEME_KEY
-import com.example.playlisstmaker.Constants.SETTINGS_PREFERENCES
+import com.example.playlisstmaker.utils.Constants.DARK_THEME_KEY
+import com.example.playlisstmaker.utils.Constants.SETTINGS_PREFERENCES
 
 
 class App: Application() {
