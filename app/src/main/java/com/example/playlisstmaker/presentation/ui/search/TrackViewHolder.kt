@@ -1,4 +1,4 @@
-package com.example.playlisstmaker.ui.search
+package com.example.playlisstmaker.presentation.ui.search
 
 import android.util.TypedValue
 import android.view.View

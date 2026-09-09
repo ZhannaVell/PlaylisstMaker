@@ -1,4 +1,4 @@
-package com.example.playlisstmaker.ui.audioplayer
+package com.example.playlisstmaker.presentation.ui.audioplayer
 
 import android.os.Bundle
 import android.util.Log
@@ -15,7 +15,6 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlisstmaker.domain.api.AudioPlayerInteractor
 import com.example.playlisstmaker.domain.models.AudioPlayerState
 import com.example.playlisstmaker.utils.Constants
-import com.example.playlisstmaker.data.media.ProgressTimer
 import com.example.playlisstmaker.R
 import com.example.playlisstmaker.di.Creator
 import com.example.playlisstmaker.domain.models.Track
@@ -36,7 +35,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         get() = requireNotNull(_track)
 
     private lateinit var interactor: AudioPlayerInteractor
-    private lateinit var progressTimer: ProgressTimer
+
 
     private var isPlaying = false
     private var isFavorite = false
@@ -87,37 +86,13 @@ class AudioPlayerActivity : AppCompatActivity() {
             throw IllegalArgumentException(Constants.ERROR_TRACK_MISSING)
         }
 
-
-        progressTimer = Creator.provideProgressTimer(
-            onTimeUpdate = { time ->
-                tvProgressTime.text = time
-            }
-        )
-
-        val mediaPlayerManager = Creator.provideMediaPlayerManager(
-            onPrepared = {
-                btnPlay.isEnabled = true
-                updatePlayButton()
-            },
-            onCompletion = {
-                updatePlayButton()
-                tvProgressTime.text = getString(R.string.progress_time_format)
-            },
-            onError = {
-                btnPlay.isEnabled = false
-                updatePlayButton()
-            },
-            onStateChanged = { state ->
-                updatePlayButton()
-            }
-        )
-
         interactor = Creator.provideAudioPlayerInteractor(
-            mediaPlayerManager,
-            progressTimer
+            onPrepared = ::onPlayerPrepared,
+            onCompletion = ::onPlayerCompletion,
+            onError = ::onPlayerError,
+            onStateChanged = ::onPlayerStateChanged,
+            onTimeUpdate = ::onTimeUpdate
         )
-
-
 
         initViews()
         bindData()
@@ -125,6 +100,28 @@ class AudioPlayerActivity : AppCompatActivity() {
         preparePlayer()
 
 
+    }
+    private fun onPlayerPrepared() {
+        btnPlay.isEnabled = true
+        updatePlayButton()
+    }
+
+    private fun onPlayerCompletion() {
+        updatePlayButton()
+        tvProgressTime.text = getString(R.string.progress_time_format)
+    }
+
+    private fun onPlayerError() {
+        btnPlay.isEnabled = false
+        updatePlayButton()
+    }
+
+    private fun onPlayerStateChanged(state: Int) {
+        updatePlayButton()
+    }
+
+    private fun onTimeUpdate(time: String) {
+        tvProgressTime.text = time
     }
 
     override fun onPause() {
@@ -140,6 +137,12 @@ class AudioPlayerActivity : AppCompatActivity() {
 
         super.onDestroy()
 
+    }
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        _track?.let {
+            outState.putParcelable(Constants.TRACK_STATE_KEY, it)
+        }
     }
 
     private fun setupWindowInsets() {
@@ -310,11 +313,7 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
 
     }
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        _track?.let {
-            outState.putParcelable(Constants.TRACK_STATE_KEY, it)
-        }
-    }
+
+
 
 }

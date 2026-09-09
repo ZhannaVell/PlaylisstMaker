@@ -1,4 +1,4 @@
-package com.example.playlisstmaker.ui.search
+package com.example.playlisstmaker.presentation.ui.search
 
 import android.content.Intent
 import android.os.Bundle
@@ -19,19 +19,22 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
+import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.RecyclerView
+
 import com.example.playlisstmaker.R
 
 import com.example.playlisstmaker.di.Creator
 import com.example.playlisstmaker.domain.api.SearchHistoryInteractor
 import com.example.playlisstmaker.domain.api.SearchTracksInteractor
 import com.example.playlisstmaker.domain.models.Track
-import com.example.playlisstmaker.ui.audioplayer.AudioPlayerActivity
+import com.example.playlisstmaker.presentation.ui.audioplayer.AudioPlayerActivity
 import com.example.playlisstmaker.utils.Constants
 import com.google.android.material.appbar.MaterialToolbar
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.textview.MaterialTextView
-import com.google.gson.Gson
+import kotlinx.coroutines.launch
+
 
 class SearchActivity : AppCompatActivity() {
 
@@ -70,9 +73,8 @@ class SearchActivity : AppCompatActivity() {
         setContentView(R.layout.activity_search)
 
         interactor = Creator.provideSearchTracksInteractor()
-        val sharedPrefs = getSharedPreferences(Constants.SETTINGS_PREFERENCES, MODE_PRIVATE)
-        val gson = Gson()
-        historyInteractor = Creator.provideSearchHistoryInteractor(sharedPrefs, gson)
+
+        historyInteractor = Creator.provideSearchHistoryInteractor()
 
         setupViews()
         setupEdgeToEdge()
@@ -252,19 +254,18 @@ class SearchActivity : AppCompatActivity() {
         showLoading()
         hideHistory()
 
-        interactor.searchTracks(query, object : SearchTracksInteractor.TracksConsumer {
-            override fun consume(foundTracks: List<Track>) {
-                if (foundTracks.isNotEmpty()) {
-                    showTracks(foundTracks)
+        lifecycleScope.launch {
+            try {
+                val tracks = interactor.searchTracks(query)
+                if (tracks.isNotEmpty()) {
+                    showTracks(tracks)
                 } else {
                     showEmpty()
                 }
-            }
-
-            override fun onError() {
+            } catch (e: Exception) {
                 showError()
             }
-        })
+        }
     }
 
     private fun getPlaceholderImage(isNetworkError: Boolean): Int {

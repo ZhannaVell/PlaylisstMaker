@@ -12,7 +12,7 @@ import com.google.gson.reflect.TypeToken
 class SearchHistoryRepositoryImpl(
     private val sharedPreferences: SharedPreferences,
     private val gson: Gson
-) : SearchHistoryRepository, SearchHistoryInteractor {
+) : SearchHistoryRepository {
 
 
     override fun getHistory(): List<Track> {
@@ -22,31 +22,20 @@ class SearchHistoryRepositoryImpl(
             gson.fromJson(json, type) ?: emptyList()
         } else {
             emptyList()
-
         }
     }
-
-    override fun addTrack(track: Track) {
-        var history = getHistory().toMutableList()
-        history.removeAll { it.trackId == track.trackId }
-        history.add(0, track)
-
-        if (history.size > Constants.MAX_HISTORY_SIZE) {
-            history = history.take(Constants.MAX_HISTORY_SIZE).toMutableList()
-        }
-        saveHistory(history)
-    }
-
-    override fun clearHistory() {
-        saveHistory(emptyList())
-    }
-
-    private fun saveHistory(history: List<Track>) {
+    override fun saveHistory(history: List<Track>) {
         val json = gson.toJson(history)
         sharedPreferences.edit()
             .putString(Constants.HISTORY_KEY, json)
             .apply()
 
     }
+
+    override fun clearHistory() {
+        saveHistory(emptyList())
+    }
+
+
 
 }

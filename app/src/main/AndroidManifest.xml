@@ -26,16 +26,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.settings.SettingsActivity"
+            android:name=".presentation.ui.settings.SettingsActivity"
             android:exported="true" />
 
         <activity
             android:name=".presentation.MediaActivity"
             android:exported="true" />
         <activity
-            android:name=".ui.search.SearchActivity"
+            android:name=".presentation.ui.search.SearchActivity"
             android:exported="true" />
-        <activity android:name=".ui.audioplayer.AudioPlayerActivity"
+        <activity android:name=".presentation.ui.audioplayer.AudioPlayerActivity"
             android:exported="true"/>
     </application>
 

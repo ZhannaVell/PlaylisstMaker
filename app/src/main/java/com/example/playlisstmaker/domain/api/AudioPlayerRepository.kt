@@ -1,5 +1,6 @@
 package com.example.playlisstmaker.domain.api
 
+import android.media.MediaPlayer
 import com.example.playlisstmaker.domain.models.Track
 
 interface AudioPlayerRepository {
@@ -9,5 +10,6 @@ interface AudioPlayerRepository {
     fun release ()
     fun getState() : Int
     fun isPlaying() : Boolean
+    fun getPlayer(): MediaPlayer?
 
 }
