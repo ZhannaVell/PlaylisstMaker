@@ -1,15 +1,16 @@
-package com.example.playlisstmaker
+package com.example.playlisstmaker.presentation
 
 import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.Button
-import android.widget.Toast
-import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
+import com.example.playlisstmaker.R
+import com.example.playlisstmaker.presentation.ui.search.SearchActivity
+import com.example.playlisstmaker.presentation.ui.settings.SettingsActivity
 
 class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -54,4 +55,3 @@ class MainActivity : AppCompatActivity() {
 
     }
 }
-

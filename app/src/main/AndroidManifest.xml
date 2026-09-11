@@ -17,7 +17,7 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,16 +26,16 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SettingsActivity"
+            android:name=".presentation.ui.settings.SettingsActivity"
             android:exported="true" />
 
         <activity
-            android:name=".MediaActivity"
+            android:name=".presentation.MediaActivity"
             android:exported="true" />
         <activity
-            android:name=".SearchActivity"
+            android:name=".presentation.ui.search.SearchActivity"
             android:exported="true" />
-        <activity android:name=".AudioPlayerActivity"
+        <activity android:name=".presentation.ui.audioplayer.AudioPlayerActivity"
             android:exported="true"/>
     </application>
 

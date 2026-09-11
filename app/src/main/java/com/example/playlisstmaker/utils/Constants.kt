@@ -1,4 +1,4 @@
-package com.example.playlisstmaker
+package com.example.playlisstmaker.utils
 
 object Constants {
     const val SETTINGS_PREFERENCES = "settings_preferences"
@@ -7,9 +7,12 @@ object Constants {
     const val SEARCH_TEXT_KEY = "SEARCH_TEXT"
 
     const val TRACK_EXTRA = "track"
+    const val TRACK_STATE_KEY = "track_state"
 
     const val ERROR_TRACK_MISSING = "Track data is missing"
 
     const val SEARCH_DEBOUNCE_DELAY = 2000L
     const val CLICK_DEBOUNCE_DELAY = 1000L
+    const val MAX_HISTORY_SIZE = 10
+
 }
