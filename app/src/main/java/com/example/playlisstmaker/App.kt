@@ -1,11 +1,10 @@
 package com.example.playlisstmaker
 
 import android.app.Application
-import android.content.SharedPreferences
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.playlisstmaker.di.Creator
-import com.example.playlisstmaker.utils.Constants.DARK_THEME_KEY
-import com.example.playlisstmaker.utils.Constants.SETTINGS_PREFERENCES
+import com.example.playlisstmaker.creator.Creator
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.runBlocking
 
 
 class App: Application() {
@@ -13,18 +12,16 @@ class App: Application() {
     override fun onCreate() {
         super.onCreate()
         Creator.init(this)
-        val isDark = Creator.provideSettingsInteractor().getTheme()
+        val themeSettings = runBlocking {
+            Creator.provideSettingsInteractor().themeFlow.first()
+        }
 
-        switchTheme(isDark)
+        switchTheme(themeSettings.isDarkTheme)
     }
     fun switchTheme(darkThemeEnabled: Boolean) {
         AppCompatDelegate.setDefaultNightMode(
-            if (darkThemeEnabled) {
-                AppCompatDelegate.MODE_NIGHT_YES
-            } else {
-                AppCompatDelegate.MODE_NIGHT_NO
-            }
+            if (darkThemeEnabled) AppCompatDelegate.MODE_NIGHT_YES
+            else AppCompatDelegate.MODE_NIGHT_NO
         )
     }
-
 }
