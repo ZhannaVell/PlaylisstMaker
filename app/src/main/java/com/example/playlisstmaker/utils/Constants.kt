@@ -12,6 +12,7 @@ object Constants {
     // Intent
     const val TRACK_EXTRA = "track"
     const val TRACK_STATE_KEY = "track_state"
+    const val MIME_TYPE_TEXT_PLAIN = "text/plain"
 
     // Ошибки
     const val ERROR_TRACK_MISSING = "Track data is missing"

@@ -119,13 +119,11 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.observeState().observe(this) { state ->
-            updatePlayButton(state)
-            binding.btnPlay.isEnabled = state != AudioPlayerState.DEFAULT
-        }
+        viewModel.observeState().observe(this) { screenState ->
+            updatePlayButton(screenState.playerState)
+            binding.btnPlay.isEnabled = screenState.playerState != AudioPlayerState.Default
 
-        viewModel.observeProgress().observe(this) { time ->
-            binding.tvProgressTime.text = time
+            binding.tvProgressTime.text = screenState.progressTime
         }
     }
 
@@ -133,10 +131,10 @@ class AudioPlayerActivity : AppCompatActivity() {
 
     private fun updatePlayButton(state: AudioPlayerState) {
         val iconRes = when (state) {
-            AudioPlayerState.PLAYING -> R.drawable.ic_pause_100
-            AudioPlayerState.PREPARED,
-            AudioPlayerState.PAUSED,
-            AudioPlayerState.DEFAULT -> R.drawable.ic_play_100
+            AudioPlayerState.Playing -> R.drawable.ic_pause_100
+            AudioPlayerState.Prepared,
+            AudioPlayerState.Paused,
+            AudioPlayerState.Default -> R.drawable.ic_play_100
         }
         binding.btnPlay.setImageResource(iconRes)
     }

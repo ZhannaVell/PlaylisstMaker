@@ -29,6 +29,7 @@ class TrackViewHolder(private val binding: SearchTrackBinding) :
         Glide.with(itemView.context)
             .load(ImageUrlHelper.getCoverArtwork(track.artworkUrl100))
             .placeholder(R.drawable.ic_placeholder_45)
+            .error(R.drawable.ic_placeholder_45)
             .centerCrop()
             .transform(RoundedCorners(cornerRadius))
             .into(binding.ivTrackCover)

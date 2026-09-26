@@ -7,12 +7,13 @@ import androidx.core.net.toUri
 import com.example.playlisstmaker.sharing.domain.SharingNavigator
 import com.example.playlisstmaker.sharing.domain.model.EmailData
 import com.example.playlisstmaker.utils.Constants
+import com.example.playlisstmaker.utils.Constants.MIME_TYPE_TEXT_PLAIN
 
 class ExternalNavigator(private val context: Context) : SharingNavigator {
 
     override fun shareLink(link: String) {
         val intent = Intent(Intent.ACTION_SEND).apply {
-            type = "text/plain"
+            type = MIME_TYPE_TEXT_PLAIN
             putExtra(Intent.EXTRA_TEXT, link)
 
         }

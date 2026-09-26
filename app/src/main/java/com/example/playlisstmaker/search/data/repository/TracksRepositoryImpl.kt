@@ -15,7 +15,10 @@ class TracksRepositoryImpl(
     override suspend fun searchTracks(expression: String): List<Track> {
         val response = networkClient.doRequest(SearchTracksRequest(expression))
 
-        return if (response.resultCode == Response.SUCCESS_CODE && response is TrackResponse) {
+         if (response.resultCode == Response.ERROR_CODE) {
+            throw IllegalStateException("Server error: ${response.resultCode}")
+        }
+        return if (response is TrackResponse) {
             response.results.map { dto ->
                 Track(
                     trackId = dto.trackId,
@@ -36,9 +39,14 @@ class TracksRepositoryImpl(
     }
 
     private fun formatTime(millis: Long): String {
-        val totalSeconds = (millis / 1000).toInt()
-        val minutes = totalSeconds / 60
-        val seconds = totalSeconds % 60
+        val totalSeconds = (millis / MILLIS_IN_SECOND).toInt()
+        val minutes = totalSeconds / SECONDS_IN_MINUTE
+        val seconds = totalSeconds % SECONDS_IN_MINUTE
         return "%02d:%02d".format(minutes, seconds)
+    }
+    companion object {
+        private const val MILLIS_IN_SECOND = 1000
+        private const val SECONDS_IN_MINUTE = 60
+        private const val TIME_FORMAT = "%02d:%02d"
     }
 }

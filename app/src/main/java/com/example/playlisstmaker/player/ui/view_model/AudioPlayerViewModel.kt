@@ -1,8 +1,6 @@
 package com.example.playlisstmaker.player.ui.view_model
 
 
-
-
 import android.media.MediaPlayer
 import android.os.Handler
 import android.os.Looper
@@ -14,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.playlisstmaker.player.domain.model.AudioPlayerState
+import com.example.playlisstmaker.player.ui.state.PlayerScreenState
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -22,19 +21,20 @@ class AudioPlayerViewModel(
 ) : ViewModel() {
 
     private val mediaPlayer = MediaPlayer()
-    private var playerState = AudioPlayerState.DEFAULT
-//LiveData состояние плеера
-    private val stateLiveData = MutableLiveData(AudioPlayerState.DEFAULT)
-    fun observeState(): LiveData<AudioPlayerState> = stateLiveData
-//Прогресс воспроизведения
-    private val progressLiveData = MutableLiveData(DEFAULT_TIME)
-    fun observeProgress(): LiveData<String> = progressLiveData
+    private var playerState: AudioPlayerState = AudioPlayerState.Default
+
+    //LiveData состояние плеера
+    private val playerStateLiveData = MutableLiveData(PlayerScreenState())
+    fun observeState(): LiveData<PlayerScreenState> = playerStateLiveData
+
+
+    private val timeFormatter = SimpleDateFormat(TIME_FORMAT, Locale.getDefault())
 
     private val handler = Handler(Looper.getMainLooper())
     private val progressRunnable = object : Runnable {
         override fun run() {
-            if (playerState == AudioPlayerState.PLAYING) {
-                progressLiveData.postValue(formatTime(mediaPlayer.currentPosition))
+            if (playerState == AudioPlayerState.Playing) {
+                updateState(progress = formatTime(mediaPlayer.currentPosition))
                 handler.postDelayed(this, UPDATE_INTERVAL)
             }
         }
@@ -46,14 +46,14 @@ class AudioPlayerViewModel(
 
     fun playPause() {
         when (playerState) {
-            AudioPlayerState.PLAYING -> pausePlayer()
-            AudioPlayerState.PREPARED, AudioPlayerState.PAUSED -> startPlayer()
-            AudioPlayerState.DEFAULT -> Log.d(TAG, "Player isn't ready")
+            AudioPlayerState.Playing -> pausePlayer()
+            AudioPlayerState.Prepared, AudioPlayerState.Paused -> startPlayer()
+            AudioPlayerState.Default -> Log.d(TAG, "Player isn't ready")
         }
     }
 
     fun onPause() {
-        if (playerState == AudioPlayerState.PLAYING) {
+        if (playerState == AudioPlayerState.Playing) {
             pausePlayer()
         }
     }
@@ -68,43 +68,42 @@ class AudioPlayerViewModel(
             mediaPlayer.setDataSource(url)
 //Плеер готов
             mediaPlayer.setOnPreparedListener {
-                playerState = AudioPlayerState.PREPARED
-                stateLiveData.postValue(playerState)
+                playerState = AudioPlayerState.Prepared
+                updateState()
             }
 //трек доиграл. сбрасываем прогресс
             mediaPlayer.setOnCompletionListener {
-                playerState = AudioPlayerState.PREPARED
-                stateLiveData.postValue(playerState)
-                progressLiveData.postValue(DEFAULT_TIME)
+                playerState = AudioPlayerState.Prepared
+                updateState(progress = PlayerScreenState.DEFAULT_TIME)
                 stopProgressUpdates()
             }
 //При ошибке
             mediaPlayer.setOnErrorListener { _, what, extra ->
                 Log.e(TAG, "MediaPlayer error: what=$what, extra=$extra")
-                playerState = AudioPlayerState.DEFAULT
-                stateLiveData.postValue(playerState)
+                playerState = AudioPlayerState.Default
+                updateState()
                 true
             }
 //Асинхонная подготовка
             mediaPlayer.prepareAsync()
         } catch (e: Exception) {
             Log.e(TAG, "Failed to prepare MediaPlayer", e)
-            playerState = AudioPlayerState.DEFAULT
-            stateLiveData.postValue(playerState)
+            playerState = AudioPlayerState.Default
+            updateState()
         }
     }
 
     private fun startPlayer() {
         mediaPlayer.start()
-        playerState = AudioPlayerState.PLAYING
-        stateLiveData.postValue(playerState)
+        playerState = AudioPlayerState.Playing
+        updateState()
         startProgressUpdates()
     }
 
     private fun pausePlayer() {
         mediaPlayer.pause()
-        playerState = AudioPlayerState.PAUSED
-        stateLiveData.postValue(playerState)
+        playerState = AudioPlayerState.Paused
+        updateState()
         stopProgressUpdates()
     }
 
@@ -117,7 +116,15 @@ class AudioPlayerViewModel(
     }
 
     private fun formatTime(millis: Int): String {
-        return SimpleDateFormat(TIME_FORMAT, Locale.getDefault()).format(millis)
+        return timeFormatter.format(millis)
+    }
+
+    private fun updateState(
+        state: AudioPlayerState = playerState,
+        progress: String = playerStateLiveData.value?.progressTime
+            ?: PlayerScreenState.DEFAULT_TIME
+    ) {
+        playerStateLiveData.postValue(PlayerScreenState(state, progress))
     }
 
     override fun onCleared() {
@@ -131,8 +138,8 @@ class AudioPlayerViewModel(
         private const val TAG = "AudioPlayerViewModel"
         private const val UPDATE_INTERVAL = 300L
         private const val TIME_FORMAT = "mm:ss"
-        private const val DEFAULT_TIME = "00:00"
-//Фабрика создания AudioPlayerViewModel
+
+        //Фабрика создания AudioPlayerViewModel
         fun getFactory(url: String): ViewModelProvider.Factory = viewModelFactory {
             initializer {
                 AudioPlayerViewModel(url)

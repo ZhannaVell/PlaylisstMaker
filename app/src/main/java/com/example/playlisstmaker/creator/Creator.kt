@@ -21,9 +21,16 @@ import com.example.playlisstmaker.sharing.data.ExternalNavigator
 import com.example.playlisstmaker.sharing.domain.SharingInteractor
 import com.example.playlisstmaker.sharing.domain.impl.SharingInteractorImpl
 import com.example.playlisstmaker.sharing.domain.model.EmailData
+import com.example.playlisstmaker.utils.AndroidResourceProvider
+import com.example.playlisstmaker.utils.ResourceProvider
 
 object Creator {
     private lateinit var appContext: Context
+    private val resourceProvider: ResourceProvider by lazy {
+        AndroidResourceProvider(appContext)
+    }
+
+    fun provideResourceProvider(): ResourceProvider = resourceProvider
 
 
     fun init(context: Context) {

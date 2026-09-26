@@ -56,6 +56,7 @@ class SearchActivity : AppCompatActivity() {
 
         binding.searchEditText.setText(viewModel.getQuery())
         binding.searchEditText.setSelection(binding.searchEditText.text?.length ?: 0)
+        binding.placeholderContainer.isVisible = false
     }
 
     private fun setupEdgeToEdge() {
@@ -159,14 +160,20 @@ class SearchActivity : AppCompatActivity() {
 
     private fun render(state: SearchState) {
         when (state) {
+            is SearchState.Idle -> showIdle()
             is SearchState.Loading -> showLoading()
             is SearchState.Content -> showContent(state.tracks)
-            is SearchState.Empty -> showEmpty()
-            is SearchState.Error -> showError()
+            is SearchState.Empty -> showEmpty(state)
+            is SearchState.Error -> showError(state)
             is SearchState.History -> showHistory(state.tracks)
         }
     }
-
+    private fun showIdle() {
+        binding.progressBar.isVisible = false
+        binding.rvTracks.isVisible = false
+        binding.placeholderContainer.isVisible = false
+        hideHistory()
+    }
     private fun showLoading() {
         binding.progressBar.isVisible = true
         binding.rvTracks.isVisible = false
@@ -182,29 +189,29 @@ class SearchActivity : AppCompatActivity() {
         hideHistory()
     }
 
-    private fun showEmpty() {
+    private fun showEmpty(state: SearchState.Empty) {
         binding.progressBar.isVisible = false
         binding.rvTracks.isVisible = false
         binding.placeholderContainer.isVisible = true
 
-        binding.placeholderImage.setImageResource(R.drawable.ic_error_empty_120)
-        binding.placeholderTitle.text = getString(R.string.empty_result)
+        binding.placeholderImage.setImageResource(state.iconRes)
+        binding.placeholderTitle.text = state.title
         binding.errorSubtitle.isVisible = false
         binding.retryButton.isVisible = false
 
         hideHistory()
     }
 
-    private fun showError() {
+    private fun showError(state: SearchState.Error) {
         binding.progressBar.isVisible = false
         binding.rvTracks.isVisible = false
         binding.placeholderContainer.isVisible = true
 
-        binding.placeholderImage.setImageResource(R.drawable.ic_error_network_120)
-        binding.placeholderTitle.text = getString(R.string.error_network_title)
-        binding.errorSubtitle.text = getString(R.string.error_network_subtitle)
-        binding.errorSubtitle.isVisible = true
-        binding.retryButton.isVisible = true
+        binding.placeholderImage.setImageResource(state.iconRes)
+        binding.placeholderTitle.text = state.title
+        binding.errorSubtitle.isVisible = state.subtitle !=null
+        state.subtitle?.let {binding.errorSubtitle.text = it}
+        binding.retryButton.isVisible = state.showRetry
 
         hideHistory()
     }
