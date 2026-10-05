@@ -5,12 +5,11 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
+
 import androidx.lifecycle.viewModelScope
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+
 import com.example.playlisstmaker.R
-import com.example.playlisstmaker.creator.Creator
+
 import com.example.playlisstmaker.search.domain.SearchHistoryInteractor
 import com.example.playlisstmaker.search.domain.SearchTracksInteractor
 import com.example.playlisstmaker.search.domain.model.Track
@@ -140,18 +139,7 @@ class SearchViewModel(
         handler.removeCallbacks(searchRunnable)
     }
 
-    companion object {
-        fun getFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                SearchViewModel(
-                    searchTracksInteractor = Creator.provideSearchTracksInteractor(),
-                    searchHistoryInteractor = Creator.provideSearchHistoryInteractor(),
-                    resourceProvider = Creator.provideResourceProvider()
 
-                )
-            }
-        }
-    }
 }
 
 

@@ -7,27 +7,27 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
-import androidx.lifecycle.ViewModelProvider
+
 import com.example.playlisstmaker.App
 
 
 import com.example.playlisstmaker.databinding.ActivitySettingsBinding
 
 import com.example.playlisstmaker.settings.ui.activity.view_model.SettingsViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
-import kotlin.jvm.java
+
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
-    private lateinit var viewModel: SettingsViewModel
+    private val viewModel: SettingsViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(this, SettingsViewModel.getFactory())
-            .get(SettingsViewModel::class.java)
+
 
         setupEdgeToEdge()
         setupToolbar()

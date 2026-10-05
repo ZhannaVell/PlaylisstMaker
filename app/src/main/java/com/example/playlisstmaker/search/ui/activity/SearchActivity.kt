@@ -13,9 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
 
-import com.example.playlisstmaker.R
 
 import com.example.playlisstmaker.databinding.ActivitySearchBinding
 import com.example.playlisstmaker.player.ui.activity.AudioPlayerActivity
@@ -26,12 +24,14 @@ import com.example.playlisstmaker.search.ui.model.TrackParcelable
 import com.example.playlisstmaker.search.ui.state.SearchState
 import com.example.playlisstmaker.search.ui.view_model.SearchViewModel
 import com.example.playlisstmaker.utils.Constants
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 
 class SearchActivity : AppCompatActivity() {
+    private val viewModel: SearchViewModel by viewModel()
 
     private lateinit var binding: ActivitySearchBinding
-    private lateinit var viewModel: SearchViewModel
+
 
     private lateinit var adapter: TrackAdapter
     private lateinit var historyAdapter: TrackAdapter
@@ -44,8 +44,7 @@ class SearchActivity : AppCompatActivity() {
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        viewModel = ViewModelProvider(this, SearchViewModel.getFactory())
-            .get(SearchViewModel::class.java)
+
 
         setupEdgeToEdge()
         setupToolbar()

@@ -42,7 +42,7 @@ class TracksRepositoryImpl(
         val totalSeconds = (millis / MILLIS_IN_SECOND).toInt()
         val minutes = totalSeconds / SECONDS_IN_MINUTE
         val seconds = totalSeconds % SECONDS_IN_MINUTE
-        return "%02d:%02d".format(minutes, seconds)
+        return TIME_FORMAT.format(minutes, seconds)
     }
     companion object {
         private const val MILLIS_IN_SECOND = 1000
