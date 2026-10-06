@@ -7,7 +7,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
 import androidx.core.view.updatePadding
-import androidx.lifecycle.ViewModelProvider
+
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlisstmaker.R
@@ -19,6 +19,8 @@ import com.example.playlisstmaker.search.ui.model.TrackParcelable
 import com.example.playlisstmaker.utils.Constants
 import com.example.playlisstmaker.utils.ImageUrlHelper
 import com.example.playlisstmaker.utils.getParcelableExtraCompat
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.parameter.parametersOf
 
 /**
  * Экран воспроизведения трека.
@@ -36,14 +38,18 @@ class AudioPlayerActivity : AppCompatActivity() {
     companion object {
         private const val TAG = "AudioPlayer"
     }
-//Доступ к view элементам
-    private lateinit var binding: ActivityAudioPlayerBinding
-    //Управление MediaPlayer и состоянием
-    private lateinit var viewModel: AudioPlayerViewModel
 
-    private var _track: Track? = null
-    private val track: Track
-        get() = requireNotNull(_track)
+    //Доступ к view элементам
+    private lateinit var binding: ActivityAudioPlayerBinding
+    private val track: Track by lazy {
+        intent.getParcelableExtraCompat<TrackParcelable>(Constants.TRACK_EXTRA)?.toTrack()
+            ?: throw IllegalArgumentException(Constants.ERROR_TRACK_MISSING)
+    }
+    private val url: String by lazy { track.previewUrl ?: "" }
+    private val viewModel: AudioPlayerViewModel by viewModel {
+        parametersOf(url)
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -51,22 +57,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         setupWindowInsets()
-//Восстановление трека из savedInstanceState, потом из Intent
-        _track = if (savedInstanceState != null) {
-            savedInstanceState.getParcelable<TrackParcelable>(Constants.TRACK_STATE_KEY)?.toTrack()
-        } else {
-            intent.getParcelableExtraCompat<TrackParcelable>(Constants.TRACK_EXTRA)?.toTrack()
-        }
-
-        if (_track == null) {
-            throw IllegalArgumentException(Constants.ERROR_TRACK_MISSING)
-        }
-
-        val url = track.previewUrl ?: ""
-//Создание viewModel через фабрику
-        viewModel = ViewModelProvider(this, AudioPlayerViewModel.getFactory(url))
-            .get(AudioPlayerViewModel::class.java)
-
         bindData() //информация о треке отрисовка
         setupListeners() //обработка кнопок
         observeViewModel() //подписка на LiveData
@@ -77,12 +67,6 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
     }
 
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        _track?.let {
-            outState.putParcelable(Constants.TRACK_STATE_KEY, TrackParcelable.from(it))
-        }
-    }
 
     override fun onPause() {
         super.onPause()
@@ -126,7 +110,6 @@ class AudioPlayerActivity : AppCompatActivity() {
             binding.tvProgressTime.text = screenState.progressTime
         }
     }
-
 
 
     private fun updatePlayButton(state: AudioPlayerState) {

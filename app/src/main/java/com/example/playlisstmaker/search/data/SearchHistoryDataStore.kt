@@ -14,9 +14,8 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 
 
-class SearchHistoryDataStore(private val context: Context) {
+class SearchHistoryDataStore(private val context: Context, private val gson: Gson) {
 
-    private val gson = Gson()
     private val listType = object : TypeToken<List<Track>>() {}.type
 
 

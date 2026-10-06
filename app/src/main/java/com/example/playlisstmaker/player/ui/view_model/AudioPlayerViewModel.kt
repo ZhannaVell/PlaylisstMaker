@@ -8,9 +8,7 @@ import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
+
 import com.example.playlisstmaker.player.domain.model.AudioPlayerState
 import com.example.playlisstmaker.player.ui.state.PlayerScreenState
 import java.text.SimpleDateFormat
@@ -133,17 +131,11 @@ class AudioPlayerViewModel(
         mediaPlayer.release()
         Log.d(TAG, "ViewModel cleared, MediaPlayer released")
     }
-
     companion object {
         private const val TAG = "AudioPlayerViewModel"
         private const val UPDATE_INTERVAL = 300L
         private const val TIME_FORMAT = "mm:ss"
-
-        //Фабрика создания AudioPlayerViewModel
-        fun getFactory(url: String): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                AudioPlayerViewModel(url)
-            }
-        }
     }
+
+
 }

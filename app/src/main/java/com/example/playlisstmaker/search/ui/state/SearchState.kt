@@ -1,6 +1,6 @@
 package com.example.playlisstmaker.search.ui.state
 
-import androidx.annotation.DrawableRes
+
 import com.example.playlisstmaker.search.domain.model.Track
 
 sealed interface SearchState {
