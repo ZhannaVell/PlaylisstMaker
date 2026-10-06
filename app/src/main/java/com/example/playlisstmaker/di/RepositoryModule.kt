@@ -9,7 +9,7 @@ import com.example.playlisstmaker.settings.domain.SettingsRepository
 import org.koin.dsl.module
 
 val repositoryModule = module {
-    single<TracksRepository> {
+    factory<TracksRepository> {
         TracksRepositoryImpl(get())
     }
     single<SearchHistoryRepository> {
