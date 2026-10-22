@@ -30,7 +30,7 @@
             android:exported="true" />
 
         <activity
-            android:name=".media.ui.MediaActivity"
+            android:name=".media.MediaActivity"
             android:exported="true" />
         <activity
             android:name=".search.ui.activity.SearchActivity"

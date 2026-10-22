@@ -24,6 +24,7 @@
     <dimen name="size_45">45dp</dimen>
     <dimen name="size_54">54dp</dimen>
     <dimen name="size_100">100dp</dimen>
+    <dimen name="size_160">160dp</dimen>
 
     <!--text-->
     <dimen name="text_size_body_s">11sp</dimen>

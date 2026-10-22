@@ -7,7 +7,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.updatePadding
 import com.example.playlisstmaker.databinding.ActivityMainBinding
-import com.example.playlisstmaker.media.ui.MediaActivity
+import com.example.playlisstmaker.media.MediaActivity
 import com.example.playlisstmaker.search.ui.activity.SearchActivity
 import com.example.playlisstmaker.settings.ui.activity.SettingsActivity
 

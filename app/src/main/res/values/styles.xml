@@ -63,7 +63,7 @@
         <item name="cornerFamily">rounded</item>
         <item name="cornerSize">@dimen/spacing_s</item>
     </style>
-    <style name="Widget.PlaylistMaker.Button.Retry" parent="Widget.Material3.Button">
+    <style name="Widget.PlaylistMaker.Button.Primary" parent="Widget.Material3.Button">
         <item name="android:textAllCaps">false</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
         <item name="android:textColor">?attr/retryButtonTextColor</item>
@@ -130,6 +130,21 @@
         <item name="android:background">@android:color/transparent</item>
         <item name="android:foreground">?attr/selectableItemBackgroundBorderless</item>
     </style>
+
+    <style name="TextAppearance.PlaylistMaker.Tab" parent="TextAppearance.Material3.TitleSmall">
+        <item name="android:fontFamily">@font/ys_display_medium</item>
+        <item name="android:textSize">@dimen/text_size_body_ss</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textAllCaps">false</item>
+    </style>
+
+    <style name="MediaPlaceholder">
+    <item name="fontFamily">@font/ys_display_medium</item>
+    <item name="android:textColor">?attr/colorOnSurface</item>
+    <item name="android:textSize">@dimen/text_size_body_l</item>
+    </style>
+
+
 
 
 
