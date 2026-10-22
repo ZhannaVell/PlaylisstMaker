@@ -120,7 +120,7 @@
 
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/retryButton"
-                    style="@style/Widget.PlaylistMaker.Button.Retry"
+                    style="@style/Widget.PlaylistMaker.Button.Primary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="@dimen/spacing_xxl"
@@ -165,7 +165,7 @@
                 <!-- Кнопка очистки -->
                 <com.google.android.material.button.MaterialButton
                     android:id="@+id/clearHistoryButton"
-                    style="@style/Widget.PlaylistMaker.Button.Retry"
+                    style="@style/Widget.PlaylistMaker.Button.Primary"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center_horizontal"

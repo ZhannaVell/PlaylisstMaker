@@ -1,5 +1,7 @@
 package com.example.playlisstmaker.di
 
+import com.example.playlisstmaker.media.ui.view_model.FavoritesViewModel
+import com.example.playlisstmaker.media.ui.view_model.PlaylistsViewModel
 import com.example.playlisstmaker.player.ui.view_model.AudioPlayerViewModel
 import com.example.playlisstmaker.search.ui.view_model.SearchViewModel
 import com.example.playlisstmaker.settings.ui.activity.view_model.SettingsViewModel
@@ -25,6 +27,8 @@ val viewModelModule = module {
             url = url
         )
     }
+    viewModel { FavoritesViewModel() }
+    viewModel { PlaylistsViewModel() }
 }
 
 
