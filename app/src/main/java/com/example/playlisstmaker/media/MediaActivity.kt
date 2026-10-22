@@ -24,6 +24,7 @@ class MediaActivity : AppCompatActivity() {
         setupToolbar()
         setupViewPager()
     }
+
     private fun setupEdgeToEdge() {
         ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
             val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
@@ -31,11 +32,13 @@ class MediaActivity : AppCompatActivity() {
             insets
         }
     }
+
     private fun setupToolbar() {
         binding.tbMedia.setNavigationOnClickListener {
             finish()
         }
     }
+
     private fun setupViewPager() {
         binding.viewPager.adapter = MediaViewPagerAdapter(
             fragmentManager = supportFragmentManager,
@@ -55,9 +58,5 @@ class MediaActivity : AppCompatActivity() {
         super.onDestroy()
         tabMediator.detach()
     }
-
-
-
-
 }
 

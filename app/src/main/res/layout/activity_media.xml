@@ -16,7 +16,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="@dimen/spacing_l"
-        app:tabTextAppearance="@style/TextAppearance.PlaylistMaker.Tab"
+        android:background="@android:color/transparent"
         app:tabGravity="fill"
         app:tabIndicatorColor="?attr/colorOnSurface"
         app:tabIndicatorFullWidth="false"
@@ -24,8 +24,8 @@
         app:tabPaddingEnd="@dimen/spacing_s"
         app:tabPaddingStart="@dimen/spacing_s"
         app:tabSelectedTextColor="?attr/colorOnSurface"
-        app:tabTextColor="?attr/colorOnSurface"
-        android:background="@android:color/transparent"/>
+        app:tabTextAppearance="@style/TextAppearance.PlaylistMaker.Tab"
+        app:tabTextColor="?attr/colorOnSurface" />
 
 
     <androidx.viewpager2.widget.ViewPager2
