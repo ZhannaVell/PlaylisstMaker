@@ -1,36 +1,34 @@
-package com.example.playlisstmaker.search.ui.activity
+package com.example.playlisstmaker.search.ui.fragment
 
-import android.content.Intent
+import android.content.Context
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
 import androidx.core.widget.doOnTextChanged
-
-
-import com.example.playlisstmaker.databinding.ActivitySearchBinding
-import com.example.playlisstmaker.player.ui.activity.AudioPlayerActivity
-import com.example.playlisstmaker.search.ui.adapter.TrackAdapter
-
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import com.example.playlisstmaker.R
+import com.example.playlisstmaker.databinding.FragmentSearchBinding
+import com.example.playlisstmaker.player.ui.fragment.AudioPlayerFragment
 import com.example.playlisstmaker.search.domain.model.Track
+import com.example.playlisstmaker.search.ui.adapter.TrackAdapter
 import com.example.playlisstmaker.search.ui.model.TrackParcelable
 import com.example.playlisstmaker.search.ui.state.SearchState
 import com.example.playlisstmaker.search.ui.view_model.SearchViewModel
 import com.example.playlisstmaker.utils.Constants
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-
-class SearchActivity : AppCompatActivity() {
+class SearchFragment : Fragment() {
     private val viewModel: SearchViewModel by viewModel()
 
-    private lateinit var binding: ActivitySearchBinding
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
 
 
     private lateinit var adapter: TrackAdapter
@@ -39,15 +37,10 @@ class SearchActivity : AppCompatActivity() {
     private var isClickAllowed = true
     private val handler = Handler(Looper.getMainLooper())
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        isClickAllowed = true
 
-
-
-        setupEdgeToEdge()
-        setupToolbar()
         setupRecyclerView()
         setupHistoryRecyclerView()
         setupListeners()
@@ -58,18 +51,13 @@ class SearchActivity : AppCompatActivity() {
         binding.placeholderContainer.isVisible = false
     }
 
-    private fun setupEdgeToEdge() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val statusBar = insets.getInsets(WindowInsetsCompat.Type.statusBars())
-            view.updatePadding(top = statusBar.top)
-            insets
-        }
-    }
-
-    private fun setupToolbar() {
-        binding.tbSearch.setNavigationOnClickListener {
-            finish()
-        }
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     private fun setupRecyclerView() {
@@ -139,20 +127,22 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun openAudioPlayer(track: Track) {
-        val intent = Intent(this, AudioPlayerActivity::class.java)
-        intent.putExtra(Constants.TRACK_EXTRA, TrackParcelable.from(track))
-        startActivity(intent)
+        findNavController().navigate(
+            R.id.action_searchFragment_to_audioPlayerFragment,
+            AudioPlayerFragment.createArgs(TrackParcelable.from(track))
+        )
     }
 
     private fun hideKeyboard() {
-        val imm = getSystemService(INPUT_METHOD_SERVICE) as InputMethodManager
+        val imm =
+            requireContext().getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
         binding.searchEditText.windowToken?.let {
             imm.hideSoftInputFromWindow(it, 0)
         }
     }
 
     private fun observeViewModel() {
-        viewModel.observeState().observe(this) { state ->
+        viewModel.observeState().observe(viewLifecycleOwner) { state ->
             render(state)
         }
     }
@@ -167,12 +157,14 @@ class SearchActivity : AppCompatActivity() {
             is SearchState.History -> showHistory(state.tracks)
         }
     }
+
     private fun showIdle() {
         binding.progressBar.isVisible = false
         binding.rvTracks.isVisible = false
         binding.placeholderContainer.isVisible = false
         hideHistory()
     }
+
     private fun showLoading() {
         binding.progressBar.isVisible = true
         binding.rvTracks.isVisible = false
@@ -208,8 +200,8 @@ class SearchActivity : AppCompatActivity() {
 
         binding.placeholderImage.setImageResource(state.iconRes)
         binding.placeholderTitle.text = state.title
-        binding.errorSubtitle.isVisible = state.subtitle !=null
-        state.subtitle?.let {binding.errorSubtitle.text = it}
+        binding.errorSubtitle.isVisible = state.subtitle != null
+        state.subtitle?.let { binding.errorSubtitle.text = it }
         binding.retryButton.isVisible = state.showRetry
 
         hideHistory()
@@ -235,8 +227,8 @@ class SearchActivity : AppCompatActivity() {
         binding.clearHistoryButton.isVisible = false
     }
 
-    override fun onDestroy() {
-        super.onDestroy()
-        handler.removeCallbacksAndMessages(null)
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }
