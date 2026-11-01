@@ -1,48 +1,45 @@
-package com.example.playlisstmaker.player.ui.activity
+package com.example.playlisstmaker.player.ui.fragment
 
 import android.os.Bundle
 import android.util.Log
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
 import androidx.core.view.isVisible
-import androidx.core.view.updatePadding
-
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.example.playlisstmaker.R
-import com.example.playlisstmaker.databinding.ActivityAudioPlayerBinding
+import com.example.playlisstmaker.databinding.FragmentAudioPlayerBinding
 import com.example.playlisstmaker.player.domain.model.AudioPlayerState
 import com.example.playlisstmaker.player.ui.view_model.AudioPlayerViewModel
 import com.example.playlisstmaker.search.domain.model.Track
 import com.example.playlisstmaker.search.ui.model.TrackParcelable
 import com.example.playlisstmaker.utils.Constants
 import com.example.playlisstmaker.utils.ImageUrlHelper
-import com.example.playlisstmaker.utils.getParcelableExtraCompat
+import com.example.playlisstmaker.utils.getParcelableCompat
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.parameter.parametersOf
 
-/**
- * Экран воспроизведения трека.
- * Отвечает за
- * Отображение информации о треке
- * Управление воспроизведением через AudioPlayerViewModel (Play/Pause).
- * Отображение прогресса воспроизведения.
- * Паузу при сворачивании приложения.
- * Трек передаётся через Intent как Parcelable (Constants.TRACK_EXTRA).
- * URL для MediaPlayer берётся из track.previewUrl.
- */
 
-class AudioPlayerActivity : AppCompatActivity() {
+class AudioPlayerFragment : Fragment() {
 
     companion object {
         private const val TAG = "AudioPlayer"
+        private const val ARGS_TRACK = "track"
+
+        fun createArgs(track: TrackParcelable): Bundle =
+            Bundle().apply {
+                putParcelable(ARGS_TRACK, track)
+            }
     }
 
-    //Доступ к view элементам
-    private lateinit var binding: ActivityAudioPlayerBinding
+
+    private var _binding: FragmentAudioPlayerBinding? = null
+    private val binding get() = _binding!!
     private val track: Track by lazy {
-        intent.getParcelableExtraCompat<TrackParcelable>(Constants.TRACK_EXTRA)?.toTrack()
+        requireArguments().getParcelableCompat<TrackParcelable>(ARGS_TRACK)?.toTrack()
             ?: throw IllegalArgumentException(Constants.ERROR_TRACK_MISSING)
     }
     private val url: String by lazy { track.previewUrl ?: "" }
@@ -51,12 +48,10 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivityAudioPlayerBinding.inflate(layoutInflater)
-        setContentView(binding.root)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
 
-        setupWindowInsets()
+
         bindData() //информация о треке отрисовка
         setupListeners() //обработка кнопок
         observeViewModel() //подписка на LiveData
@@ -67,30 +62,27 @@ class AudioPlayerActivity : AppCompatActivity() {
         }
     }
 
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        _binding = FragmentAudioPlayerBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
 
     override fun onPause() {
         super.onPause()
         viewModel.onPause()
     }
 
-    private fun setupWindowInsets() {
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { view, insets ->
-            val statusBarInsets = insets.getInsets(WindowInsetsCompat.Type.statusBars())
-            val navigationBarInsets = insets.getInsets(WindowInsetsCompat.Type.navigationBars())
-
-            view.updatePadding(
-                top = statusBarInsets.top,
-                bottom = navigationBarInsets.bottom
-            )
-
-            insets
-        }
-    }
 
     private fun setupListeners() {
         binding.tbAudioPlayer.setNavigationOnClickListener {
-            finish()
+            findNavController().navigateUp()
         }
+
         binding.btnPlay.setOnClickListener {
             viewModel.playPause()
         }
@@ -103,7 +95,7 @@ class AudioPlayerActivity : AppCompatActivity() {
     }
 
     private fun observeViewModel() {
-        viewModel.observeState().observe(this) { screenState ->
+        viewModel.observeState().observe(viewLifecycleOwner) { screenState ->
             updatePlayButton(screenState.playerState)
             binding.btnPlay.isEnabled = screenState.playerState != AudioPlayerState.Default
 
@@ -166,18 +158,23 @@ class AudioPlayerActivity : AppCompatActivity() {
             binding.tvCountryRight.isVisible = false
         }
 
-        binding.tvProgressTime.text = getString(R.string.progress_time_format)
+        binding.tvProgressTime.text = requireContext().getString(R.string.progress_time_format)
         loadCover()
     }
 
     private fun loadCover() {
         val cornerRadius = resources.getDimensionPixelSize(R.dimen.spacing_s)
-        Glide.with(this)
+        Glide.with(requireContext())
             .load(ImageUrlHelper.getCoverArtwork(track.artworkUrl100))
             .placeholder(R.drawable.ic_placeholder_45)
             .error(R.drawable.ic_placeholder_45)
             .centerCrop()
             .transform(RoundedCorners(cornerRadius))
             .into(binding.ivCover)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        _binding = null
     }
 }

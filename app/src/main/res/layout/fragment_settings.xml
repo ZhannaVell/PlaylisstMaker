@@ -4,21 +4,16 @@
     android:id="@+id/root"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:background="?attr/colorSurface">
+    android:background="?attr/colorSurface"
+    android:orientation="vertical">
 
-    <!-- Заголовок с иконкой назад -->
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/tbSettings"
-        style="@style/TitleIcBack"
+        style="@style/Title"
         app:title="@string/settings" />
 
-
-    <!--темная тема-->
-
     <!-- Поделиться приложением -->
-
     <com.google.android.material.switchmaterial.SwitchMaterial
         android:id="@+id/theme_switch"
         style="@style/Settings"
@@ -31,23 +26,23 @@
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_share"
         style="@style/Settings"
-        android:text="@string/share_app"
-        android:drawableEnd="@drawable/ic_share_24"/>
+        android:drawableEnd="@drawable/ic_share_24"
+        android:text="@string/share_app" />
 
     <!-- Написать в поддержку -->
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_support"
         style="@style/Settings"
-        android:text="@string/write_to_support"
-        android:drawableEnd="@drawable/ic_support_24"/>
+        android:drawableEnd="@drawable/ic_support_24"
+        android:text="@string/write_to_support" />
 
     <!-- Пользовательское соглашение -->
 
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/tv_agreement"
         style="@style/Settings"
-        android:text="@string/user_agreement"
-        android:drawableEnd="@drawable/ic_arrow_agreement_24"/>
+        android:drawableEnd="@drawable/ic_arrow_agreement_24"
+        android:text="@string/user_agreement" />
 
 </LinearLayout>

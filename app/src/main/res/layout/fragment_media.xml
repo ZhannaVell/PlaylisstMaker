@@ -8,14 +8,13 @@
 
     <com.google.android.material.appbar.MaterialToolbar
         android:id="@+id/tbMedia"
-        style="@style/TitleIcBack"
+        style="@style/Title"
         app:title="@string/media" />
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="@dimen/spacing_l"
         android:background="@android:color/transparent"
         app:tabGravity="fill"
         app:tabIndicatorColor="?attr/colorOnSurface"
@@ -26,7 +25,6 @@
         app:tabSelectedTextColor="?attr/colorOnSurface"
         app:tabTextAppearance="@style/TextAppearance.PlaylistMaker.Tab"
         app:tabTextColor="?attr/colorOnSurface" />
-
 
     <androidx.viewpager2.widget.ViewPager2
         android:id="@+id/viewPager"

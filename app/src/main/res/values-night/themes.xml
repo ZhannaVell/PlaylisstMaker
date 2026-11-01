@@ -3,10 +3,15 @@
     <style name="Base.Theme.PlaylistMaker" parent="Theme.MaterialComponents.DayNight.NoActionBar">
         <!-- Customize your light theme here. -->
         <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+        <!--Основные цвета-->
         <item name="colorPrimary">@color/black</item>
         <item name="colorOnPrimary">@color/white</item>
+
+        <!--Фон и текст светлая тема-->
         <item name="colorSurface">@color/black</item>
         <item name="colorOnSurface">@color/white</item>
+
+        <!-- Кастомные атрибуты -->
         <item name="searchTint">@color/black</item>
         <item name="trackColor">@color/white</item>
         <item name="retryButtonBackgroundTint">@color/white</item>
@@ -14,8 +19,11 @@
         <item name="switch_thumb">@color/switch_thumb</item>
         <item name="switch_track">@color/switch_track</item>
         <item name="audioPlayerIconColor">@color/white</item>
+        <item name="bottomNavBackground">@color/black</item>
 
     </style>
+
+    <!--Заглушки-->
 
     <style name="ThemeOverlay.Placeholder">
         <item name="colorOnSurface">@color/white</item>

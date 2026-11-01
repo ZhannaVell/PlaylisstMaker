@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <attr name="searchTint" format="color"/>
-    <attr name="trackColor" format="color"/>
+    <attr name="searchTint" format="color" />
+    <attr name="trackColor" format="color" />
     <attr name="retryButtonBackgroundTint" format="color" />
     <attr name="retryButtonTextColor" format="color" />
-    <attr name="switch_track" format= "color"/>
-    <attr name="switch_thumb" format= "color"/>
-    <attr name="audioPlayerIconColor" format="color"/>
+    <attr name="switch_track" format="color" />
+    <attr name="switch_thumb" format="color" />
+    <attr name="audioPlayerIconColor" format="color" />
+    <attr name="bottomNavBackground" format="color" />
 
 </resources>
